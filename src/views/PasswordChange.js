@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 
 import { auth } from '../firebase';
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
+import byPropKey from '../utils/byPropKey';
 
 const INITIAL_STATE = {
   passwordOne: '',

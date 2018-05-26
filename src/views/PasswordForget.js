@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { auth } from '../firebase';
+import byPropKey from '../utils/byPropKey';
 
 const PasswordForgetPage = () => (
   <div>
@@ -9,10 +10,6 @@ const PasswordForgetPage = () => (
     <PasswordForgetForm />
   </div>
 );
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
 
 const INITIAL_STATE = {
   email: '',

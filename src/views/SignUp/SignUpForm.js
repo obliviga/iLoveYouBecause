@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import * as routes from '../../constants/routes';
 import { auth, db } from '../../firebase';
+import byPropKey from '../../utils/byPropKey';
 
 const INITIAL_STATE = {
   username: '',
@@ -10,10 +11,6 @@ const INITIAL_STATE = {
   passwordTwo: '',
   error: null,
 };
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
-});
 
 class SignUpForm extends Component {
   constructor(props) {
