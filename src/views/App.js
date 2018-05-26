@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import Navigation from './Navigation';
 import SignUp from './SignUp/SignUp';
-import SignIn from './SignIn/SignIn';
+import LogIn from './LogIn/LogIn';
 import PasswordForgetPage from './PasswordForget';
 import Dashboard from './Dashboard';
 import AccountPage from './Account';
@@ -13,8 +12,6 @@ import withAuthentication from '../utils/withAuthentication';
 const App = () => (
   <Router>
     <div>
-      <Navigation />
-      <hr />
       <Route
         exact
         path={routes.SIGN_UP}
@@ -22,8 +19,8 @@ const App = () => (
       />
       <Route
         exact
-        path={routes.SIGN_IN}
-        component={() => <SignIn />}
+        path={routes.LOG_IN}
+        component={() => <LogIn />}
       />
       <Route
         exact

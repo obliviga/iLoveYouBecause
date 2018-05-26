@@ -13,7 +13,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInForm extends Component {
+class LogInForm extends Component {
   constructor(props) {
     super(props);
 
@@ -81,4 +81,4 @@ class SignInForm extends Component {
   }
 }
 
-export { SignInForm };
+export { LogInForm };

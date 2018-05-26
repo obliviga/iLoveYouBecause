@@ -2,20 +2,23 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import * as routes from '../constants/routes';
-import SignOutButton from '../components/SignOutButton';
 import AuthUserContext from '../components/AuthUserContext';
+import Button from '../components/Button/Button';
+import { auth } from '../firebase';
 
 const NavigationAuth = () => (
   <ul>
     <li><Link to={routes.DASHBOARD}>Dashboard</Link></li>
     <li><Link to={routes.ACCOUNT}>Account</Link></li>
-    <li><SignOutButton /></li>
+    <li>
+      <Button onClick={auth.doSignOut} text="Sign Out" />
+    </li>
   </ul>
 );
 
 const NavigationNonAuth = () => (
   <ul>
-    <li><Link to={routes.SIGN_IN}>Sign In</Link></li>
+    <li><Link to={routes.LOG_IN}>Log In</Link></li>
   </ul>
 );
 

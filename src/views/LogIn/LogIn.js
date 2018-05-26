@@ -3,15 +3,15 @@ import { withRouter } from 'react-router-dom';
 
 import { SignUpLink } from '../../components/SignUpLink';
 import { PasswordForgetLink } from '../PasswordForget';
-import { SignInForm } from './SignInForm';
+import { LogInForm } from './LogInForm';
 
-const SignIn = ({ history }) => (
+const LogIn = ({ history }) => (
   <div>
-    <h1>SignIn</h1>
-    <SignInForm history={history} />
+    <h1>Log In</h1>
+    <LogInForm history={history} />
     <PasswordForgetLink />
     <SignUpLink />
   </div>
 );
 
-export default withRouter(SignIn);
+export default withRouter(LogIn);
