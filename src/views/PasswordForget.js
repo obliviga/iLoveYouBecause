@@ -2,27 +2,24 @@ import React, { Component } from 'react';
 
 import { auth } from '../firebase';
 import byPropKey from '../utils/byPropKey';
-
-const PasswordForgetPage = () => (
-  <div>
-    <h1>PasswordForget</h1>
-    <PasswordForgetForm />
-  </div>
-);
+import Input from '../components/Input/Input';
+import Button from '../components/Button/Button';
 
 const INITIAL_STATE = {
   email: '',
   error: null,
 };
 
-class PasswordForgetForm extends Component {
+class PasswordForget extends Component {
   constructor(props) {
     super(props);
 
+    this.handleOnSubmit = this.handleOnSubmit.bind(this);
+    this.handleOnChange = this.handleOnChange.bind(this);
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = (event) => {
+  handleOnSubmit(event) {
     const { email } = this.state;
 
     auth.doPasswordReset(email)
@@ -36,6 +33,10 @@ class PasswordForgetForm extends Component {
     event.preventDefault();
   }
 
+  handleOnChange(event) {
+    this.setState(byPropKey('email', event.target.value));
+  }
+
   render() {
     const {
       email,
@@ -45,27 +46,26 @@ class PasswordForgetForm extends Component {
     const isInvalid = email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={this.state.email}
-          onChange={
-            event => this.setState(byPropKey('email', event.target.value))
-          }
-          type="text"
-          placeholder="Email Address"
-        />
-        <button disabled={isInvalid} type="submit">
-          Reset My Password
-        </button>
+      <div>
+        <h1>PasswordForget</h1>
+        <form onSubmit={this.handleOnSubmit}>
+          <Input
+            value={this.state.email}
+            onChange={this.handleOnChange}
+            type="text"
+            placeholder="Email Address"
+          />
+          <Button
+            disabled={isInvalid}
+            type="submit"
+            text="Reset My Password"
+          />
 
-        { error && <p>{error.message}</p> }
-      </form>
+          { error && <p>{error.message}</p> }
+        </form>
+      </div>
     );
   }
 }
 
-export default PasswordForgetPage;
-
-export {
-  PasswordForgetForm,
-};
+export default PasswordForget;
