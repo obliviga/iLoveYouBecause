@@ -7,7 +7,7 @@ import AuthUserContext from '../components/AuthUserContext';
 
 const NavigationAuth = () => (
   <ul>
-    <li><Link to={routes.HOME}>Home</Link></li>
+    <li><Link to={routes.DASHBOARD}>Dashboard</Link></li>
     <li><Link to={routes.ACCOUNT}>Account</Link></li>
     <li><SignOutButton /></li>
   </ul>
