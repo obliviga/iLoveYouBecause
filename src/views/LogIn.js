@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import byPropKey from '../utils/byPropKey';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
-import { SignUpLink } from '../components/SignUpLink';
-import { PasswordForgetLink } from './PasswordForget';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
 
@@ -83,8 +81,9 @@ class LogIn extends Component {
 
           { error && <p>{error.message}</p> }
         </form>
-        <PasswordForgetLink />
-        <SignUpLink />
+        <Link to="/pw-forget">Forgot Password?</Link>
+        <p>Don&apos;t have an account?</p>
+        <Link to={routes.SIGN_UP}>Sign Up</Link>
       </div>
     );
   }
