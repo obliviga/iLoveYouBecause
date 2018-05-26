@@ -5,13 +5,14 @@ import SignUp from './SignUp/SignUp';
 import LogIn from './LogIn/LogIn';
 import PasswordForgetPage from './PasswordForget';
 import Dashboard from './Dashboard';
-import AccountPage from './Account';
+import Navigation from './Navigation';
 import * as routes from '../constants/routes';
 import withAuthentication from '../utils/withAuthentication';
 
 const App = () => (
   <Router>
     <div>
+      <Navigation />
       <Route
         exact
         path={routes.SIGN_UP}
@@ -31,11 +32,6 @@ const App = () => (
         exact
         path={routes.DASHBOARD}
         component={() => <Dashboard />}
-      />
-      <Route
-        exact
-        path={routes.ACCOUNT}
-        component={() => <AccountPage />}
       />
     </div>
   </Router>

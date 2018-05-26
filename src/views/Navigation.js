@@ -16,15 +16,21 @@ const NavigationAuth = () => (
   </ul>
 );
 
-const NavigationNonAuth = () => (
-  <ul>
-    <li><Link to={routes.LOG_IN}>Log In</Link></li>
-  </ul>
-);
+// const NavigationNonAuth = () => (
+//   <ul>
+//     <li><Link to={routes.LOG_IN}>Log In</Link></li>
+//   </ul>
+// );
+
+// const Navigation = () => (
+//   <AuthUserContext.Consumer>
+//     {authUser => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
+//   </AuthUserContext.Consumer>
+// );
 
 const Navigation = () => (
   <AuthUserContext.Consumer>
-    {authUser => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
+    {authUser => (authUser ? <NavigationAuth /> : null)}
   </AuthUserContext.Consumer>
 );
 
