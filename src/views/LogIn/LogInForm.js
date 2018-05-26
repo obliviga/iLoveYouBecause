@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import { auth } from '../../firebase';
 import * as routes from '../../constants/routes';
+import Input from '../../components/Input/Input';
+import Button from '../../components/Button/Button';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
@@ -55,7 +57,7 @@ class LogInForm extends Component {
 
     return (
       <form onSubmit={this.onSubmit}>
-        <input
+        <Input
           value={email}
           onChange={
             event => this.setState(byPropKey('email', event.target.value))
@@ -63,7 +65,8 @@ class LogInForm extends Component {
           type="text"
           placeholder="Email Address"
         />
-        <input
+
+        <Input
           value={password}
           onChange={
             event => this.setState(byPropKey('password', event.target.value))
@@ -71,9 +74,12 @@ class LogInForm extends Component {
           type="password"
           placeholder="Password"
         />
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
+
+        <Button
+          type="submit"
+          disabled={isInvalid}
+          text="Sign In"
+        />
 
         { error && <p>{error.message}</p> }
       </form>
