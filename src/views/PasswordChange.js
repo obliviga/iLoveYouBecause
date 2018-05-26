@@ -9,7 +9,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class PasswordChangeForm extends Component {
+class PasswordChange extends Component {
   constructor(props) {
     super(props);
 
@@ -69,4 +69,4 @@ class PasswordChangeForm extends Component {
   }
 }
 
-export default PasswordChangeForm;
+export default PasswordChange;
