@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import SignUp from './SignUp/SignUp';
-import LogIn from './LogIn/LogIn';
+import LogIn from './LogIn';
 import PasswordForgetPage from './PasswordForget';
 import Dashboard from './Dashboard';
 import Navigation from './Navigation';
