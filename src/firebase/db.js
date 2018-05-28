@@ -10,3 +10,9 @@ export const doCreateUser = (id, username, email) => (
 export const onceGetUsers = () => (
   db.ref('users').once('value')
 );
+
+export const addLovedOne = (id, lovedOne) => (
+  db.ref(`users/${id}/lovedOnes`).push({
+    lovedOne,
+  })
+);
