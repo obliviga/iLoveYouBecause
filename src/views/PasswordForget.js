@@ -52,7 +52,7 @@ class PasswordForget extends Component {
           <Input
             value={this.state.email}
             onChange={this.handleOnChange}
-            type="text"
+            type="email"
             placeholder="Email Address"
           />
           <Button

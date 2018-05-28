@@ -98,7 +98,7 @@ class SignUp extends Component {
         <Input
           value={email}
           onChange={this.handleOnChangeEmail}
-          type="text"
+          type="email"
           placeholder="Email Address"
         />
         <Input
