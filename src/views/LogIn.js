@@ -17,10 +17,14 @@ class LogIn extends Component {
   constructor(props) {
     super(props);
 
+    this.handleOnSubmit = this.handleOnSubmit.bind(this);
+    this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
+    this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
+
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = (event) => {
+  handleOnSubmit(event) {
     const {
       email,
       password,
@@ -42,6 +46,14 @@ class LogIn extends Component {
     event.preventDefault();
   }
 
+  handleOnChangeEmail(event) {
+    this.setState(byPropKey('email', event.target.value));
+  }
+
+  handleOnChangePassword(event) {
+    this.setState(byPropKey('password', event.target.value));
+  }
+
   render() {
     const {
       email,
@@ -54,21 +66,17 @@ class LogIn extends Component {
     return (
       <div>
         <h1>Log In</h1>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.handleOnSubmit}>
           <Input
             value={email}
-            onChange={
-              event => this.setState(byPropKey('email', event.target.value))
-            }
-            type="text"
+            onChange={this.handleOnChangeEmail}
+            type="email"
             placeholder="Email Address"
           />
 
           <Input
             value={password}
-            onChange={
-              event => this.setState(byPropKey('password', event.target.value))
-            }
+            onChange={this.handleOnChangePassword}
             type="password"
             placeholder="Password"
           />
