@@ -7,12 +7,6 @@ import * as routes from '../constants/routes';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
 
-const INITIAL_STATE = {
-  email: '',
-  password: '',
-  error: null,
-};
-
 class LogIn extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +15,11 @@ class LogIn extends Component {
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
     this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
 
-    this.state = { ...INITIAL_STATE };
+    this.state = {
+      email: '',
+      password: '',
+      error: null,
+    };
   }
 
   handleOnSubmit(event) {
@@ -36,7 +34,11 @@ class LogIn extends Component {
 
     auth.doSignInWithEmailAndPassword(email, password)
       .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
+        this.setState(() => ({
+          email: '',
+          password: '',
+          error: null,
+        }));
         history.push(routes.DASHBOARD);
       })
       .catch(error => {
