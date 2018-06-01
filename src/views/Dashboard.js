@@ -79,8 +79,8 @@ class Dashboard extends Component {
 
     if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
-        this.state.lovedOnes.map((lovedOne, index) => (
-          <li key={index}>
+        this.state.lovedOnes.map((lovedOne) => (
+          <li key={lovedOne.id}>
             {lovedOne.name}
             <Button
               onClick={() => this.removeLovedOne(lovedOne)}
@@ -94,6 +94,8 @@ class Dashboard extends Component {
         <p>Here are your loved ones:</p>
       );
     } else {
+      // this check should not be based on state,
+      // need to avoid flash of content
       welcomeBlurb = (
         <p>Show some love, add loved ones!</p>
       );
