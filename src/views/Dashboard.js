@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
 import { db, auth } from '../firebase/firebase';
-
 import withAuthorization from '../utils/withAuthorization';
+import Button from '../components/Button/Button';
+import Input from '../components/Input/Input';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -11,6 +12,9 @@ class Dashboard extends Component {
     this.state = {
       lovedOnes: null,
       user: null,
+      addButtonDisabled: false,
+      removeButtonDisabled: false,
+      inputValue: '',
     };
   }
 
@@ -31,6 +35,10 @@ class Dashboard extends Component {
     });
   }
 
+  handleChange = (event) => {
+    this.setState({ inputValue: event.target.value });
+  }
+
   addLovedOne = () => {
     auth.onAuthStateChanged(user => {
       const newLovedOne = db
@@ -40,12 +48,12 @@ class Dashboard extends Component {
         .doc();
 
       newLovedOne.set({
-        name: this.addLovedOneInput.value,
+        name: this.state.inputValue,
         id: newLovedOne.id,
         createdBy: this.state.user.uid,
       });
 
-      this.addLovedOneInput.value = null;
+      this.setState({ value: '' });
     });
   }
 
@@ -68,9 +76,11 @@ class Dashboard extends Component {
         this.state.lovedOnes.map((lovedOne, index) => (
           <li key={index}>
             {lovedOne.name}
-            <button onClick={() => this.removeLovedOne(lovedOne)}>
-              Remove
-            </button>
+            <Button
+              onClick={() => this.removeLovedOne(lovedOne)}
+              text="Remove"
+              disabled={this.state.removeButtonDisabled}
+            />
           </li>
         ))
       );
@@ -78,11 +88,10 @@ class Dashboard extends Component {
 
     return (
       <div>
-        <input
-          type="text"
-          ref={input => {
-            this.addLovedOneInput = input;
-          }}
+        <Input
+          value={this.state.inputValue}
+          placeholder="Jyn Erso"
+          onChange={this.handleChange}
         />
         <button onClick={() => this.addLovedOne()}>
           Submit
