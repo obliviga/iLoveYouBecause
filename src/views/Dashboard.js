@@ -10,7 +10,7 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {
-      lovedOnes: null,
+      lovedOnes: [],
       user: null,
       inputValue: '',
     };
@@ -75,8 +75,9 @@ class Dashboard extends Component {
   render() {
     let lovedOnes;
     let inputValid;
+    let welcomeBlurb;
 
-    if (this.state.lovedOnes) {
+    if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
         this.state.lovedOnes.map((lovedOne, index) => (
           <li key={index}>
@@ -87,6 +88,14 @@ class Dashboard extends Component {
             />
           </li>
         ))
+      );
+
+      welcomeBlurb = (
+        <p>Here are your loved ones:</p>
+      );
+    } else {
+      welcomeBlurb = (
+        <p>Show some love, add loved ones!</p>
       );
     }
 
@@ -109,7 +118,7 @@ class Dashboard extends Component {
           text="Add"
           disabled={!inputValid}
         />
-        <p>Here are your loved ones:</p>
+        {welcomeBlurb}
         <ul>{lovedOnes}</ul>
       </div>
     );
