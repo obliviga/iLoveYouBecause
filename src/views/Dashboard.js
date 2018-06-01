@@ -12,8 +12,6 @@ class Dashboard extends Component {
     this.state = {
       lovedOnes: null,
       user: null,
-      addButtonDisabled: false,
-      removeButtonDisabled: false,
       inputValue: '',
     };
   }
@@ -39,6 +37,12 @@ class Dashboard extends Component {
     this.setState({ inputValue: event.target.value });
   }
 
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter' && this.state.inputValue !== '') {
+      this.addLovedOne();
+    }
+  }
+
   addLovedOne = () => {
     auth.onAuthStateChanged(user => {
       const newLovedOne = db
@@ -53,7 +57,7 @@ class Dashboard extends Component {
         createdBy: this.state.user.uid,
       });
 
-      this.setState({ value: '' });
+      this.setState({ inputValue: '' });
     });
   }
 
@@ -70,6 +74,7 @@ class Dashboard extends Component {
 
   render() {
     let lovedOnes;
+    let inputValid;
 
     if (this.state.lovedOnes) {
       lovedOnes = (
@@ -79,11 +84,16 @@ class Dashboard extends Component {
             <Button
               onClick={() => this.removeLovedOne(lovedOne)}
               text="Remove"
-              disabled={this.state.removeButtonDisabled}
             />
           </li>
         ))
       );
+    }
+
+    if (this.state.inputValue === '') {
+      inputValid = false;
+    } else {
+      inputValid = true;
     }
 
     return (
@@ -92,10 +102,13 @@ class Dashboard extends Component {
           value={this.state.inputValue}
           placeholder="Jyn Erso"
           onChange={this.handleChange}
+          onKeyPress={this.handleKeyPress}
         />
-        <button onClick={() => this.addLovedOne()}>
-          Submit
-        </button>
+        <Button
+          onClick={this.addLovedOne}
+          text="Add"
+          disabled={!inputValid}
+        />
         <p>Here are your loved ones:</p>
         <ul>{lovedOnes}</ul>
       </div>
