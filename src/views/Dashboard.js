@@ -8,8 +8,6 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    this.addLovedOne = this.addLovedOne.bind(this);
-
     this.state = {
       lovedOnes: null,
       user: null,
@@ -18,7 +16,6 @@ class Dashboard extends Component {
 
   componentDidMount() {
     auth.onAuthStateChanged(user => {
-      console.log(user);
       db
         .collection('users')
         .doc(`${user.email}`)
@@ -26,7 +23,6 @@ class Dashboard extends Component {
         .onSnapshot(
           call => {
             const lovedOnes = call.docs.map(doc => doc.data());
-            console.log(call);
             this.setState({ lovedOnes });
           },
         );
@@ -35,23 +31,32 @@ class Dashboard extends Component {
     });
   }
 
-  addLovedOne(event) {
-    event.preventDefault();
-
+  addLovedOne = () => {
     auth.onAuthStateChanged(user => {
-      const newSuggestion = db
+      const newLovedOne = db
         .collection('users')
-        .doc(`${user.email}`)
+        .doc(user.email)
         .collection('lovedOnes')
         .doc();
 
-      newSuggestion.set({
+      newLovedOne.set({
         name: this.addLovedOneInput.value,
-        id: newSuggestion.id,
+        id: newLovedOne.id,
         createdBy: this.state.user.uid,
       });
 
       this.addLovedOneInput.value = null;
+    });
+  }
+
+  removeLovedOne = lovedOne => {
+    auth.onAuthStateChanged(user => {
+      db
+        .collection('users')
+        .doc(user.email)
+        .collection('lovedOnes')
+        .doc(lovedOne.id)
+        .delete();
     });
   }
 
@@ -63,6 +68,9 @@ class Dashboard extends Component {
         this.state.lovedOnes.map((lovedOne, index) => (
           <li key={index}>
             {lovedOne.name}
+            <button onClick={() => this.removeLovedOne(lovedOne)}>
+              Remove
+            </button>
           </li>
         ))
       );
@@ -70,15 +78,15 @@ class Dashboard extends Component {
 
     return (
       <div>
-        <form onSubmit={event => this.addLovedOne(event)}>
-          <input
-            type="text"
-            ref={input => {
-              this.addLovedOneInput = input;
-            }}
-          />
-          <button type="submit">Submit</button>
-        </form>
+        <input
+          type="text"
+          ref={input => {
+            this.addLovedOneInput = input;
+          }}
+        />
+        <button onClick={() => this.addLovedOne()}>
+          Submit
+        </button>
         <p>Here are your loved ones:</p>
         <ul>{lovedOnes}</ul>
       </div>
