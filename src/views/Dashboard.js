@@ -1,153 +1,86 @@
 import React, { Component } from 'react';
 
-import * as firebase from 'firebase';
+import { db, auth } from '../firebase/firebase';
 
-import { db } from '../firebase';
-import byPropKey from '../utils/byPropKey';
 import withAuthorization from '../utils/withAuthorization';
-import Button from '../components/Button/Button';
-import Input from '../components/Input/Input';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      email: '',
-      password: '',
-      error: null,
-      users: null,
-      lovedOne: '',
-      lovedOnes: null,
-    };
+    this.addLovedOne = this.addLovedOne.bind(this);
 
-    this.handleOnClick = this.handleOnClick.bind(this);
-    this.handleOnChange = this.handleOnChange.bind(this);
-    this.updateLovedOnes = this.updateLovedOnes.bind(this);
+    this.state = {
+      lovedOnes: null,
+      user: null,
+    };
   }
 
   componentDidMount() {
-    this.updateLovedOnes();
-  }
+    auth.onAuthStateChanged(user => {
+      console.log(user);
+      db
+        .collection('users')
+        .doc(`${user.email}`)
+        .collection('lovedOnes')
+        .onSnapshot(
+          call => {
+            const lovedOnes = call.docs.map(doc => doc.data());
+            console.log(call);
+            this.setState({ lovedOnes });
+          },
+        );
 
-  componentWillUnmount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log(user.uid);
-      } else {
-        console.log(user);
-      }
+      this.setState({ user });
     });
   }
 
-  updateLovedOnes() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log(user.uid);
-        db.getLovedOnes(user.uid)
-          .then(snapshot =>
-            this.setState(() => ({ lovedOnes: snapshot.val() })),
-          );
-      } else {
-        this.setState({ lovedOnes: '' });
-      }
-    });
-  }
-
-  handleOnClick(event) {
-    const {
-      lovedOne,
-    } = this.state;
-
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        db.addLovedOne(user.uid, lovedOne)
-          .then(() => {
-            this.setState(() => ({
-              email: '',
-              password: '',
-              error: null,
-              users: null,
-              lovedOne: '',
-              lovedOnes: null,
-            }));
-            this.updateLovedOnes();
-          })
-          .catch(error => {
-            this.setState(byPropKey('error', error));
-          });
-      } else {
-        unsubscribe();
-      }
-    });
-
+  addLovedOne(event) {
     event.preventDefault();
-  }
 
-  // removeLovedOne(event) {
-  //   const {
-  //     lovedOne,
-  //   } = this.state;
-  //
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //     if (user) {
-  //       db.addLovedOne(user.uid, lovedOne)
-  //         .then(() => {
-  //           this.setState(() => ({ ...INITIAL_STATE }));
-  //           this.updateLovedOnes();
-  //         })
-  //         .catch(error => {
-  //           this.setState(byPropKey('error', error));
-  //         });
-  //     } else {
-  //       // No user is signed in.
-  //     }
-  //   });
-  //
-  //   event.preventDefault();
-  // }
+    auth.onAuthStateChanged(user => {
+      const newSuggestion = db
+        .collection('users')
+        .doc(`${user.email}`)
+        .collection('lovedOnes')
+        .doc();
 
-  handleOnChange(event) {
-    this.setState(byPropKey('lovedOne', event.target.value));
+      newSuggestion.set({
+        name: this.addLovedOneInput.value,
+        id: newSuggestion.id,
+        createdBy: this.state.user.uid,
+      });
+
+      this.addLovedOneInput.value = null;
+    });
   }
 
   render() {
-    const {
-      lovedOne,
-      error,
-      lovedOnes,
-    } = this.state;
+    let lovedOnes;
 
-    const isInvalid = lovedOne === '';
-
-    const ListOfLovedOnes = ({ lovedOnes }) => (
-      <div>
-        {Object.keys(lovedOnes).map(key => (
-          <div key={key}>
-            {lovedOnes[key].lovedOne}
-          </div>
-        ))}
-      </div>
-    );
+    if (this.state.lovedOnes) {
+      lovedOnes = (
+        this.state.lovedOnes.map((lovedOne, index) => (
+          <li key={index}>
+            {lovedOne.name}
+          </li>
+        ))
+      );
+    }
 
     return (
       <div>
-        <p>Welcome to iLoveYouBecause!</p>
-        <Input
-          value={lovedOne}
-          onChange={this.handleOnChange}
-          type="text"
-          placeholder="John Doe"
-        />
-        <Button
-          disabled={isInvalid}
-          text="Add Loved One"
-          onClick={this.handleOnClick}
-        />
-        { error && <p>{error.message}</p> }
-
+        <form onSubmit={event => this.addLovedOne(event)}>
+          <input
+            type="text"
+            ref={input => {
+              this.addLovedOneInput = input;
+            }}
+          />
+          <button type="submit">Submit</button>
+        </form>
         <p>Here are your loved ones:</p>
-        { !!lovedOnes && <ListOfLovedOnes lovedOnes={lovedOnes} /> }
+        <ul>{lovedOnes}</ul>
       </div>
     );
   }

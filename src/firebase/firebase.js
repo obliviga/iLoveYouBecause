@@ -1,5 +1,7 @@
 import * as firebase from 'firebase';
 
+require('firebase/firestore');
+
 const config = {
   apiKey: `${process.env.REACT_APP_FIREBASE_API_KEY}`,
   authDomain: 'iloveyoubecause66.firebaseapp.com',
@@ -9,14 +11,16 @@ const config = {
   messagingSenderId: '922244904980',
 };
 
+const settings = { timestampsInSnapshots: true };
+
 if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
 
-const db = firebase.database();
 const auth = firebase.auth();
 
-export {
-  db,
-  auth,
-};
+export { auth };
+
+export const db = firebase.firestore();
+
+db.settings(settings);

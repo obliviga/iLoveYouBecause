@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import * as routes from '../constants/routes';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
 import byPropKey from '../utils/byPropKey';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
@@ -39,15 +39,9 @@ class SignUp extends Component {
     } = this.props;
 
     auth.doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
-        db.doCreateUser(authUser.uid, username, email)
-          .then(() => {
-            this.setState(() => ({ ...INITIAL_STATE }));
-            history.push(routes.DASHBOARD);
-          })
-          .catch(error => {
-            this.setState(byPropKey('error', error));
-          });
+      .then(() => {
+        this.setState(() => ({ ...INITIAL_STATE }));
+        history.push(routes.DASHBOARD);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
