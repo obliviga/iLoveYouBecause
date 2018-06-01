@@ -29,7 +29,6 @@ class SignUp extends Component {
 
   handleOnSubmit(event) {
     const {
-      username,
       email,
       passwordOne,
     } = this.state;
