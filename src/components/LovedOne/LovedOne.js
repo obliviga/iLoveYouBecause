@@ -13,11 +13,13 @@ class LovedOne extends Component {
     };
 
     this.removeLovedOne = this.removeLovedOne.bind(this);
+    this.editLovedOne = this.editLovedOne.bind(this);
+    this.cancelEdit = this.cancelEdit.bind(this);
   }
 
   removeLovedOne() {
     const {
-      lovedOne,
+      lovedOne
     } = this.props;
 
     auth.onAuthStateChanged(user => {
@@ -35,23 +37,35 @@ class LovedOne extends Component {
     this.setState({ editMode: true });
   }
 
+  cancelEdit() {
+    this.setState({ editMode: false });
+  }
+
   render() {
     const { children, lovedOne } = this.props;
 
     let removeButton;
-
-    const editButton = (
-      <Button
-        onClick={() => this.editLovedOne(lovedOne)}
-        text="Edit"
-      />
-    );
+    let editButton;
 
     if (this.state.editMode === true) {
       removeButton = (
         <Button
-          onClick={() => this.removeLovedOne(lovedOne)}
+          onClick={this.removeLovedOne}
           text="Remove"
+        />
+      );
+
+      editButton = (
+        <Button
+          onClick={this.cancelEdit}
+          text="Cancel"
+        />
+      );
+    } else {
+      editButton = (
+        <Button
+          onClick={this.editLovedOne}
+          text="Edit"
         />
       );
     }
