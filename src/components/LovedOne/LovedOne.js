@@ -12,6 +12,7 @@ class LovedOne extends Component {
     this.state = {
       editMode: false,
       inputValue: '',
+      disableSave: true,
     };
 
     this.removeLovedOne = this.removeLovedOne.bind(this);
@@ -19,7 +20,7 @@ class LovedOne extends Component {
     this.cancelEdit = this.cancelEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
+    // this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   removeLovedOne() {
@@ -36,14 +37,21 @@ class LovedOne extends Component {
   }
 
   handleChange(event) {
-    this.setState({ inputValue: event.target.value });
-  }
+    this.setState({ inputValue: event.target.value, disableSave: false });
 
-  handleKeyPress(event) {
-    if (event.key === 'Enter' && this.state.inputValue !== '') {
-      this.saveEdit();
+    if (
+      this.props.lovedOne.name === event.target.value ||
+      event.target.value === ''
+    ) {
+      this.setState({ disableSave: true });
     }
   }
+
+  // handleKeyPress(event) {
+  //   if (event.key === 'Enter' && this.state.inputValue !== '') {
+  //     this.saveEdit();
+  //   }
+  // }
 
   editLovedOne() {
     this.setState({ editMode: true, inputValue: this.props.lovedOne.name });
@@ -86,6 +94,7 @@ class LovedOne extends Component {
         <Button
           onClick={this.SaveEdit}
           text="Save"
+          disabled={this.state.disableSave}
         />
       );
 
@@ -94,7 +103,7 @@ class LovedOne extends Component {
           value={this.state.inputValue}
           placeholder="Han Solo"
           onChange={this.handleChange}
-          onKeyPress={this.handleKeyPress}
+          // onKeyPress={this.handleKeyPress}
         />
       );
     } else {
