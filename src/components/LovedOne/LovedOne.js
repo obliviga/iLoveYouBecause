@@ -62,9 +62,21 @@ class LovedOne extends Component {
   }
 
   saveEdit() {
+    const { lovedOne } = this.props;
+
     this.setState({ editMode: false });
 
-    // edit in DB
+    auth.onAuthStateChanged(user => {
+
+      db
+        .collection('users')
+        .doc(user.email)
+        .collection('lovedOnes')
+        .doc(lovedOne.id)
+        .update({
+          name: this.state.inputValue,
+        });
+    });
   }
 
   render() {
@@ -92,7 +104,7 @@ class LovedOne extends Component {
 
       saveButton = (
         <Button
-          onClick={this.SaveEdit}
+          onClick={this.saveEdit}
           text="Save"
           disabled={this.state.disableSave}
         />
