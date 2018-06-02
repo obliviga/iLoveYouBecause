@@ -74,9 +74,7 @@ class Dashboard extends Component {
     if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
         this.state.lovedOnes.map((lovedOne) => (
-          <LovedOne key={lovedOne.id} lovedOne={lovedOne}>
-            {lovedOne.name}
-          </LovedOne>
+          <LovedOne key={lovedOne.id} lovedOne={lovedOne} />
         ))
       );
     }
