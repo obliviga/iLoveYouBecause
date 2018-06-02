@@ -4,6 +4,7 @@ import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
+import LovedOne from '../components/LovedOne/LovedOne';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Dashboard extends Component {
       lovedOnes: [],
       user: null,
       inputValue: '',
+      editMode: false,
     };
   }
 
@@ -57,18 +59,10 @@ class Dashboard extends Component {
         createdBy: this.state.user.uid,
       });
 
-      this.setState({ inputValue: '' });
-    });
-  }
-
-  removeLovedOne = lovedOne => {
-    auth.onAuthStateChanged(user => {
-      db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(lovedOne.id)
-        .delete();
+      this.setState({
+        inputValue: '',
+        editMode: false,
+      });
     });
   }
 
@@ -80,24 +74,10 @@ class Dashboard extends Component {
     if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
         this.state.lovedOnes.map((lovedOne) => (
-          <li key={lovedOne.id}>
+          <LovedOne key={lovedOne.id} lovedOne={lovedOne}>
             {lovedOne.name}
-            <Button
-              onClick={() => this.removeLovedOne(lovedOne)}
-              text="Remove"
-            />
-          </li>
+          </LovedOne>
         ))
-      );
-
-      welcomeBlurb = (
-        <p>Here are your loved ones:</p>
-      );
-    } else {
-      // this check should not be based on state,
-      // need to avoid flash of content
-      welcomeBlurb = (
-        <p>Show some love, add loved ones!</p>
       );
     }
 
