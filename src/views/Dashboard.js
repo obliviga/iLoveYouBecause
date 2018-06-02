@@ -13,8 +13,6 @@ class Dashboard extends Component {
       lovedOnes: [],
       user: null,
       inputValue: '',
-      inputEditValue: '',
-      editMode: false,
     };
   }
 
@@ -43,14 +41,6 @@ class Dashboard extends Component {
     if (event.key === 'Enter' && this.state.inputValue !== '') {
       this.addLovedOne();
     }
-  }
-
-  handleEditChange = (event) => {
-    this.setState({ inputEditValue: event.target.value });
-  }
-
-  handleEditKeyPress = (event) => {
-    // need to go into db and update value
   }
 
   addLovedOne = () => {
@@ -82,17 +72,6 @@ class Dashboard extends Component {
     });
   }
 
-  editLovedOne = lovedOne => {
-    this.setState({
-      editMode: true,
-      inputEditValue: lovedOne.name,
-    });
-  }
-
-  cancelEdit = lovedOne => {
-    this.setState({ editMode: false });
-  }
-
   render() {
     let lovedOnes;
     let inputValid;
@@ -100,53 +79,15 @@ class Dashboard extends Component {
 
     if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
-        this.state.lovedOnes.map((lovedOne, index) => {
-          let lovedOneEdit;
-          let editButton;
-          let removeButton;
-          let cancelButton;
-
-          if (this.state.editMode === true) {
-            console.log(index);
-            lovedOneEdit = (
-              <Input
-                value={this.state.inputEditValue}
-                placeholder="Han Solo"
-                onChange={this.handleEditChange}
-                onKeyPress={this.handleEditKeyPress}
-              />
-            );
-            removeButton = (
-              <Button
-                onClick={() => this.removeLovedOne(lovedOne)}
-                text="Remove"
-              />
-            );
-            cancelButton = (
-              <Button
-                onClick={() => this.cancelEdit(lovedOne)}
-                text="Cancel"
-              />
-            );
-          } else {
-            lovedOneEdit = lovedOne.name;
-            editButton = (
-              <Button
-                onClick={() => this.editLovedOne(lovedOne)}
-                text="Edit"
-              />
-            );
-          }
-
-          return (
-            <li key={lovedOne.id}>
-              {lovedOneEdit}
-              {editButton}
-              {removeButton}
-              {cancelButton}
-            </li>
-          );
-        })
+        this.state.lovedOnes.map((lovedOne) => (
+          <li key={lovedOne.id}>
+            {lovedOne.name}
+            <Button
+              onClick={() => this.removeLovedOne(lovedOne)}
+              text="Remove"
+            />
+          </li>
+        ))
       );
 
       welcomeBlurb = (
