@@ -101,12 +101,14 @@ class Dashboard extends Component {
     if (this.state.lovedOnes.length > 0) {
       lovedOnes = (
         this.state.lovedOnes.map((lovedOne, index) => {
-          let lovedOneEntry = lovedOne.name;
+          let lovedOneEdit;
           let editButton;
-          // let removeButton;
+          let removeButton;
+          let cancelButton;
 
-          if (this.state.inputEditValue === lovedOne.name) {
-            lovedOneEntry = (
+          if (this.state.editMode === true) {
+            console.log(index);
+            lovedOneEdit = (
               <Input
                 value={this.state.inputEditValue}
                 placeholder="Han Solo"
@@ -114,18 +116,20 @@ class Dashboard extends Component {
                 onKeyPress={this.handleEditKeyPress}
               />
             );
-
-            editButton = (
+            removeButton = (
+              <Button
+                onClick={() => this.removeLovedOne(lovedOne)}
+                text="Remove"
+              />
+            );
+            cancelButton = (
               <Button
                 onClick={() => this.cancelEdit(lovedOne)}
                 text="Cancel"
               />
             );
-          }
-
-          if (this.state.editMode === false) {
-            lovedOneEntry = lovedOne.name;
-
+          } else {
+            lovedOneEdit = lovedOne.name;
             editButton = (
               <Button
                 onClick={() => this.editLovedOne(lovedOne)}
@@ -136,10 +140,10 @@ class Dashboard extends Component {
 
           return (
             <li key={lovedOne.id}>
-              {lovedOneEntry}
+              {lovedOneEdit}
               {editButton}
-              {/* {removeButton}
-              {cancelButton} */}
+              {removeButton}
+              {cancelButton}
             </li>
           );
         })
