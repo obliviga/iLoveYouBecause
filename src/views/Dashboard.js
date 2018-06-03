@@ -13,12 +13,15 @@ class Dashboard extends Component {
     this.state = {
       lovedOnes: [],
       user: null,
-      inputValue: '',
+      nameInputValue: '',
+      emailInputValue: '',
       editMode: false,
     };
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChangeName = this.handleChangeName.bind(this);
+    this.handleKeyPressName = this.handleKeyPressName.bind(this);
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleKeyPressEmail = this.handleKeyPressEmail.bind(this);
     this.addLovedOne = this.addLovedOne.bind(this);
   }
 
@@ -39,12 +42,22 @@ class Dashboard extends Component {
     });
   }
 
-  handleChange(event) {
-    this.setState({ inputValue: event.target.value });
+  handleChangeName(event) {
+    this.setState({ nameInputValue: event.target.value });
   }
 
-  handleKeyPress(event) {
-    if (event.key === 'Enter' && this.state.inputValue !== '') {
+  handleKeyPressName(event) {
+    if (event.key === 'Enter' && this.state.nameInputValue !== '') {
+      this.addLovedOne();
+    }
+  }
+
+  handleChangeEmail(event) {
+    this.setState({ emailInputValue: event.target.value });
+  }
+
+  handleKeyPressEmail(event) {
+    if (event.key === 'Enter' && this.state.emailInputValue !== '') {
       this.addLovedOne();
     }
   }
@@ -58,12 +71,14 @@ class Dashboard extends Component {
         .doc();
 
       newLovedOne.set({
-        name: this.state.inputValue,
+        name: this.state.nameInputValue,
+        email: this.state.emailInputValue,
         id: newLovedOne.id,
       });
 
       this.setState({
-        inputValue: '',
+        nameInputValue: '',
+        emailInputValue: '',
         editMode: false,
       });
     });
@@ -71,7 +86,7 @@ class Dashboard extends Component {
 
   render() {
     let lovedOnes;
-    let inputValid;
+    let inputsValid;
     let welcomeBlurb;
 
     if (this.state.lovedOnes.length > 0) {
@@ -82,24 +97,31 @@ class Dashboard extends Component {
       );
     }
 
-    if (this.state.inputValue === '') {
-      inputValid = false;
+    if (this.state.nameInputValue === '' || this.state.emailInputValue === '') {
+      inputsValid = false;
     } else {
-      inputValid = true;
+      inputsValid = true;
     }
 
     return (
       <div>
         <Input
-          value={this.state.inputValue}
+          value={this.state.nameInputValue}
           placeholder="Jyn Erso"
-          onChange={this.handleChange}
-          onKeyPress={this.handleKeyPress}
+          onChange={this.handleChangeName}
+          onKeyPress={this.handleKeyPressName}
+        />
+        <Input
+          type="email"
+          value={this.state.emailInputValue}
+          placeholder="jyn.erso@rogueone.com"
+          onChange={this.handleChangeEmail}
+          onKeyPress={this.handleKeyPressEmail}
         />
         <Button
           onClick={this.addLovedOne}
           text="Add"
-          disabled={!inputValid}
+          disabled={!inputsValid}
         />
         {welcomeBlurb}
         <ul>{lovedOnes}</ul>
