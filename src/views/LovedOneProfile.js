@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
@@ -110,6 +111,22 @@ class LovedOneProfile extends Component {
     );
   }
 }
+
+LovedOneProfile.propTypes = {
+  location: PropTypes.shape({
+    hash: PropTypes.string,
+    key: PropTypes.string,
+    pathname: PropTypes.string,
+  }),
+};
+
+LovedOneProfile.defaultProps = {
+  location: {
+    hash: '',
+    key: '',
+    pathname: '',
+  },
+};
 
 const authCondition = (authUser) => !!authUser;
 
