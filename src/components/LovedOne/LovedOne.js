@@ -15,6 +15,7 @@ class LovedOne extends Component {
       editMode: false,
       inputValue: '',
       disableSave: true,
+      lovedOne: '',
     };
 
     this.removeLovedOne = this.removeLovedOne.bind(this);
@@ -122,7 +123,11 @@ class LovedOne extends Component {
 
       lovedOneName = (
         <Link
-          to={`${routes.LOVEDONEPROFILE}#${lovedOne.name}`}
+          to={{
+            pathname: `${routes.LOVEDONEPROFILE}`,
+            hash: `#${lovedOne.name}`,
+            state: { lovedOne },
+          }}
         >
           {lovedOne.name}
         </Link>
