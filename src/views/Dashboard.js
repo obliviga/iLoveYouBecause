@@ -15,6 +15,7 @@ class Dashboard extends Component {
       user: null,
       inputValue: '',
       editMode: false,
+      reasons: null,
     };
   }
 
@@ -56,7 +57,7 @@ class Dashboard extends Component {
       newLovedOne.set({
         name: this.state.inputValue,
         id: newLovedOne.id,
-        createdBy: this.state.user.uid,
+        reasons: [],
       });
 
       this.setState({

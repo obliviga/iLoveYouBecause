@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
+import * as routes from '../../constants/routes';
 import { db, auth } from '../../firebase/firebase';
 import Button from '../Button/Button';
 import Input from '../Input/Input';
@@ -118,7 +120,13 @@ class LovedOne extends Component {
         />
       );
 
-      lovedOneName = lovedOne.name;
+      lovedOneName = (
+        <Link
+          to={`${routes.LOVEDONEPROFILE}#${lovedOne.name}`}
+        >
+          {lovedOne.name}
+        </Link>
+      );
     }
 
     return (
@@ -134,7 +142,6 @@ class LovedOne extends Component {
 
 LovedOne.propTypes = {
   lovedOne: PropTypes.shape({
-    createdBy: PropTypes.string,
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,

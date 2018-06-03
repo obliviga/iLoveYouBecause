@@ -7,6 +7,7 @@ import PasswordForget from './PasswordForget';
 import Dashboard from './Dashboard';
 import Account from './Account';
 import Navigation from './Navigation';
+import LovedOneProfile from './LovedOneProfile';
 import * as routes from '../constants/routes';
 import withAuthentication from '../utils/withAuthentication';
 
@@ -38,6 +39,11 @@ const App = () => (
         exact
         path={routes.ACCOUNT}
         component={() => <Account />}
+      />
+      <Route
+        exact
+        path={routes.LOVEDONEPROFILE}
+        component={() => <LovedOneProfile />}
       />
     </div>
   </Router>
