@@ -11,6 +11,10 @@ class LovedOneProfile extends Component {
   constructor(props) {
     super(props);
 
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.addReason = this.addReason.bind(this);
+
     this.state = {
       reasons: [],
       inputValue: '',
@@ -36,7 +40,7 @@ class LovedOneProfile extends Component {
     });
   }
 
-  addReason = () => {
+  addReason() {
     const { location } = this.props;
 
     auth.onAuthStateChanged(user => {
@@ -59,11 +63,11 @@ class LovedOneProfile extends Component {
     });
   }
 
-  handleChange = (event) => {
+  handleChange(event) {
     this.setState({ inputValue: event.target.value });
   }
 
-  handleKeyPress = (event) => {
+  handleKeyPress(event) {
     if (event.key === 'Enter' && this.state.inputValue !== '') {
       this.addReason();
     }

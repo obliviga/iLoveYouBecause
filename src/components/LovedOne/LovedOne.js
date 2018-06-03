@@ -63,7 +63,6 @@ class LovedOne extends Component {
     this.setState({ editMode: false });
 
     auth.onAuthStateChanged(user => {
-
       db
         .collection('users')
         .doc(user.email)

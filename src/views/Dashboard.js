@@ -16,6 +16,10 @@ class Dashboard extends Component {
       inputValue: '',
       editMode: false,
     };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.addLovedOne = this.addLovedOne.bind(this);
   }
 
   componentDidMount() {
@@ -35,17 +39,17 @@ class Dashboard extends Component {
     });
   }
 
-  handleChange = (event) => {
+  handleChange(event) {
     this.setState({ inputValue: event.target.value });
   }
 
-  handleKeyPress = (event) => {
+  handleKeyPress(event) {
     if (event.key === 'Enter' && this.state.inputValue !== '') {
       this.addLovedOne();
     }
   }
 
-  addLovedOne = () => {
+  addLovedOne() {
     auth.onAuthStateChanged(user => {
       const newLovedOne = db
         .collection('users')
