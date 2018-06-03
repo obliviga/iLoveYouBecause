@@ -78,6 +78,7 @@ class LovedOneProfile extends Component {
 
     let reasons;
     let inputValid;
+    let reasonBlurb;
 
     const lovedOneName = location.state.lovedOne.name;
 
@@ -87,6 +88,10 @@ class LovedOneProfile extends Component {
           <li key={reason.id}>{reason.name}</li>
         ))
       );
+
+      reasonBlurb = 'Here are the reasons why you love this person:';
+    } else {
+      reasonBlurb = `Add some reasons why you love ${lovedOneName}`;
     }
 
     if (this.state.inputValue === '') {
@@ -109,7 +114,7 @@ class LovedOneProfile extends Component {
           text="Add"
           disabled={!inputValid}
         />
-        <h2>Here are the reasons why you love this person:</h2>
+        <h2>{reasonBlurb}</h2>
         <ul>{reasons}</ul>
       </div>
     );
