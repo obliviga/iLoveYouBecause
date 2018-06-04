@@ -95,6 +95,10 @@ class Dashboard extends Component {
           <LovedOne key={lovedOne.id} lovedOne={lovedOne} />
         ))
       );
+
+      welcomeBlurb = 'Here are your loved ones:';
+    } else {
+      welcomeBlurb = 'Feel free to add some loved ones.';
     }
 
     if (this.state.nameInputValue === '' || this.state.emailInputValue === '') {
@@ -123,7 +127,7 @@ class Dashboard extends Component {
           text="Add"
           disabled={!inputsValid}
         />
-        {welcomeBlurb}
+        <h2>{welcomeBlurb}</h2>
         <ul>{lovedOnes}</ul>
       </div>
     );
