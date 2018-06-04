@@ -11,13 +11,14 @@ class LovedOneProfile extends Component {
   constructor(props) {
     super(props);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChangeReason = this.handleChangeReason.bind(this);
+    this.handleKeyPressReason = this.handleKeyPressReason.bind(this);
     this.addReason = this.addReason.bind(this);
+    this.editReason = this.editReason.bind(this);
 
     this.state = {
       reasons: [],
-      inputValue: '',
+      inputValueReason: '',
     };
   }
 
@@ -53,24 +54,28 @@ class LovedOneProfile extends Component {
         .doc();
 
       newReason.set({
-        name: this.state.inputValue,
+        name: this.state.inputValueReason,
         id: newReason.id,
       });
 
       this.setState({
-        inputValue: '',
+        inputValueReason: '',
       });
     });
   }
 
-  handleChange(event) {
-    this.setState({ inputValue: event.target.value });
+  handleChangeReason(event) {
+    this.setState({ inputValueReason: event.target.value });
   }
 
-  handleKeyPress(event) {
-    if (event.key === 'Enter' && this.state.inputValue !== '') {
+  handleKeyPressReason(event) {
+    if (event.key === 'Enter' && this.state.inputValueReason !== '') {
       this.addReason();
     }
+  }
+
+  editReason() {
+    this.setState({ editMode: true, inputValueReason: this.props.reason.name });
   }
 
   render() {
@@ -81,6 +86,7 @@ class LovedOneProfile extends Component {
     let reasonBlurb;
 
     const lovedOneName = location.state.lovedOne.name;
+    const lovedOneEmail = location.state.lovedOne.email;
 
     if (this.state.reasons.length > 0) {
       reasons = (
@@ -94,7 +100,7 @@ class LovedOneProfile extends Component {
       reasonBlurb = `Add some reasons why you love ${lovedOneName}`;
     }
 
-    if (this.state.inputValue === '') {
+    if (this.state.inputValueReason === '') {
       inputValid = false;
     } else {
       inputValid = true;
@@ -102,12 +108,17 @@ class LovedOneProfile extends Component {
 
     return (
       <div>
-        <h1>This is {lovedOneName}&apos;s profile</h1>
+        {/* <Button
+          onClick={this.editLovedOne}
+          text="Edit"
+        /> */}
+        <p>Name: {lovedOneName}</p>
+        <p>Email: {lovedOneEmail}</p>
         <Input
-          value={this.state.inputValue}
+          value={this.state.inputValueReason}
           placeholder="Because your hair is awesome"
-          onChange={this.handleChange}
-          onKeyPress={this.handleKeyPress}
+          onChange={this.handleChangeReason}
+          onKeyPress={this.handleKeyPressReason}
         />
         <Button
           onClick={this.addReason}
