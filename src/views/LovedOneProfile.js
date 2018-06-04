@@ -11,14 +11,23 @@ class LovedOneProfile extends Component {
   constructor(props) {
     super(props);
 
+    const { location } = this.props;
+
     this.handleChangeReason = this.handleChangeReason.bind(this);
+    this.handleChangeLovedOneName = this.handleChangeLovedOneName.bind(this);
+    this.handleChangeLovedOneEmail = this.handleChangeLovedOneEmail.bind(this);
     this.handleKeyPressReason = this.handleKeyPressReason.bind(this);
     this.addReason = this.addReason.bind(this);
-    this.editReason = this.editReason.bind(this);
+    this.editLovedOne = this.editLovedOne.bind(this);
+    this.cancelEditLovedOne = this.cancelEditLovedOne.bind(this);
+    this.saveLovedOne = this.saveLovedOne.bind(this);
 
     this.state = {
       reasons: [],
       inputValueReason: '',
+      inputValueLovedOneName: location.state.lovedOne.name,
+      inputValueLovedOneEmail: location.state.lovedOne.email,
+      editMode: false,
     };
   }
 
@@ -74,19 +83,58 @@ class LovedOneProfile extends Component {
     }
   }
 
-  editReason() {
-    this.setState({ editMode: true, inputValueReason: this.props.reason.name });
+  handleChangeLovedOneName(event) {
+    this.setState({ inputValueLovedOneName: event.target.value });
+  }
+
+  handleChangeLovedOneEmail(event) {
+    this.setState({ inputValueLovedOneEmail: event.target.value });
+  }
+
+  editLovedOne() {
+    this.setState({
+      editMode: true,
+      inputValueLovedOneName: this.state.inputValueLovedOneName,
+      inputValueLovedOneEmail: this.state.inputValueLovedOneEmail,
+    });
+  }
+
+  cancelEditLovedOne() {
+    const { location } = this.props;
+
+    this.setState({
+      editMode: false,
+      inputValueLovedOneName: location.state.lovedOne.name,
+      inputValueLovedOneEmail: location.state.lovedOne.email,
+    });
+  }
+
+  saveLovedOne() {
+    const { location } = this.props;
+
+    auth.onAuthStateChanged(user => {
+      db
+        .collection('users')
+        .doc(user.email)
+        .collection('lovedOnes')
+        .doc(location.state.lovedOne.id)
+        .update({
+          name: this.state.inputValueLovedOneName,
+          email: this.state.inputValueLovedOneEmail,
+        });
+    });
+
+    this.setState({ editMode: false });
   }
 
   render() {
-    const { location } = this.props;
-
     let reasons;
     let inputValid;
     let reasonBlurb;
-
-    const lovedOneName = location.state.lovedOne.name;
-    const lovedOneEmail = location.state.lovedOne.email;
+    let editLovedOneButton;
+    let saveLovedOneButton;
+    let lovedOneName = this.state.inputValueLovedOneName;
+    let lovedOneEmail = this.state.inputValueLovedOneEmail;
 
     if (this.state.reasons.length > 0) {
       reasons = (
@@ -106,12 +154,51 @@ class LovedOneProfile extends Component {
       inputValid = true;
     }
 
-    return (
-      <div>
-        {/* <Button
+    if (this.state.editMode === true) {
+      editLovedOneButton = (
+        <Button
+          onClick={this.cancelEditLovedOne}
+          text="Cancel"
+        />
+      );
+
+      saveLovedOneButton = (
+        <Button
+          onClick={this.saveLovedOne}
+          text="Save"
+        />
+      );
+
+      lovedOneName = (
+        <Input
+          value={this.state.inputValueLovedOneName}
+          placeholder="Jyn Erso"
+          onChange={this.handleChangeLovedOneName}
+          onKeyPress={this.handleKeyPressLovedOneName}
+        />
+      );
+
+      lovedOneEmail = (
+        <Input
+          value={this.state.inputValueLovedOneEmail}
+          placeholder="jyn.erso@rogueone.com"
+          onChange={this.handleChangeLovedOneEmail}
+          onKeyPress={this.handleKeyPressLovedOneEmail}
+        />
+      );
+    } else {
+      editLovedOneButton = (
+        <Button
           onClick={this.editLovedOne}
           text="Edit"
-        /> */}
+        />
+      );
+    }
+
+    return (
+      <div>
+        {editLovedOneButton}
+        {saveLovedOneButton}
         <p>Name: {lovedOneName}</p>
         <p>Email: {lovedOneEmail}</p>
         <Input
