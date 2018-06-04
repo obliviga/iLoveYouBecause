@@ -12,10 +12,8 @@ class Dashboard extends Component {
 
     this.state = {
       lovedOnes: [],
-      user: null,
       nameInputValue: '',
       emailInputValue: '',
-      editMode: false,
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -87,7 +85,6 @@ class Dashboard extends Component {
       this.setState({
         nameInputValue: '',
         emailInputValue: '',
-        editMode: false,
       });
     });
   }
