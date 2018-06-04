@@ -47,7 +47,11 @@ class Dashboard extends Component {
   }
 
   handleKeyPressName(event) {
-    if (event.key === 'Enter' && this.state.nameInputValue !== '') {
+    const keyPressValidation = event.key === 'Enter' &&
+      this.state.nameInputValue !== '' &&
+      this.state.emailInputValue !== '';
+
+    if (keyPressValidation) {
       this.addLovedOne();
     }
   }
@@ -57,7 +61,11 @@ class Dashboard extends Component {
   }
 
   handleKeyPressEmail(event) {
-    if (event.key === 'Enter' && this.state.emailInputValue !== '') {
+    const keyPressValidation = event.key === 'Enter' &&
+      this.state.nameInputValue !== '' &&
+      this.state.emailInputValue !== '';
+
+    if (keyPressValidation) {
       this.addLovedOne();
     }
   }
