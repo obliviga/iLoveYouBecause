@@ -4,7 +4,7 @@ import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
-import LovedOne from '../components/LovedOne/LovedOne';
+import LovedOne from './LovedOne';
 
 class Dashboard extends Component {
   constructor(props) {

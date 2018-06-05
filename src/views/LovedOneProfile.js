@@ -6,6 +6,7 @@ import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
+import Reason from './Reason';
 
 class LovedOneProfile extends Component {
   constructor(props) {
@@ -128,6 +129,8 @@ class LovedOneProfile extends Component {
   }
 
   render() {
+    const { location } = this.props;
+
     let reasons;
     let inputValid;
     let reasonBlurb;
@@ -139,7 +142,11 @@ class LovedOneProfile extends Component {
     if (this.state.reasons.length > 0) {
       reasons = (
         this.state.reasons.map((reason) => (
-          <li key={reason.id}>{reason.name}</li>
+          <Reason
+            key={reason.id}
+            reason={reason}
+            lovedOne={location.state.lovedOne}
+          />
         ))
       );
 

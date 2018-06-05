@@ -2,31 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import * as routes from '../../constants/routes';
-import { db, auth } from '../../firebase/firebase';
-import Button from '../Button/Button';
-import Input from '../Input/Input';
+import { db, auth } from '../firebase/firebase';
+import Button from '../components/Button/Button';
+import Input from '../components/Input/Input';
 
-class LovedOne extends Component {
+class Reason extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      editMode: false,
       inputValue: '',
       disableSave: true,
-      lovedOne: '',
+      reason: '',
     };
 
-    this.removeLovedOne = this.removeLovedOne.bind(this);
-    this.editLovedOne = this.editLovedOne.bind(this);
+    this.removeReason = this.removeReason.bind(this);
+    this.editReason = this.editReason.bind(this);
     this.cancelEdit = this.cancelEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  removeLovedOne() {
-    const { lovedOne } = this.props;
+  removeReason() {
+    const { reason, lovedOne } = this.props;
 
     auth.onAuthStateChanged(user => {
       db
@@ -34,6 +32,8 @@ class LovedOne extends Component {
         .doc(user.email)
         .collection('lovedOnes')
         .doc(lovedOne.id)
+        .collection('reasons')
+        .doc(reason.id)
         .delete();
     });
   }
@@ -42,15 +42,15 @@ class LovedOne extends Component {
     this.setState({ inputValue: event.target.value, disableSave: false });
 
     if (
-      this.props.lovedOne.name === event.target.value ||
+      this.props.reason.name === event.target.value ||
       event.target.value === ''
     ) {
       this.setState({ disableSave: true });
     }
   }
 
-  editLovedOne() {
-    this.setState({ editMode: true, inputValue: this.props.lovedOne.name });
+  editReason() {
+    this.setState({ editMode: true, inputValue: this.props.reason.name });
   }
 
   cancelEdit() {
@@ -58,7 +58,7 @@ class LovedOne extends Component {
   }
 
   saveEdit() {
-    const { lovedOne } = this.props;
+    const { reason, lovedOne } = this.props;
 
     this.setState({ editMode: false });
 
@@ -68,6 +68,8 @@ class LovedOne extends Component {
         .doc(user.email)
         .collection('lovedOnes')
         .doc(lovedOne.id)
+        .collection('reasons')
+        .doc(reason.id)
         .update({
           name: this.state.inputValue,
         });
@@ -75,17 +77,17 @@ class LovedOne extends Component {
   }
 
   render() {
-    const { lovedOne } = this.props;
+    const { reason } = this.props;
 
     let removeButton;
     let editButton;
     let saveButton;
-    let lovedOneName;
+    let reasonName;
 
     if (this.state.editMode === true) {
       removeButton = (
         <Button
-          onClick={this.removeLovedOne}
+          onClick={this.removeReason}
           text="Remove"
         />
       );
@@ -105,7 +107,7 @@ class LovedOne extends Component {
         />
       );
 
-      lovedOneName = (
+      reasonName = (
         <Input
           value={this.state.inputValue}
           placeholder="Han Solo"
@@ -115,27 +117,17 @@ class LovedOne extends Component {
     } else {
       editButton = (
         <Button
-          onClick={this.editLovedOne}
+          onClick={this.editReason}
           text="Edit"
         />
       );
 
-      lovedOneName = (
-        <Link
-          to={{
-            pathname: `${routes.LOVEDONEPROFILE}`,
-            hash: `#${lovedOne.name}`,
-            state: { lovedOne },
-          }}
-        >
-          {lovedOne.name}
-        </Link>
-      );
+      reasonName = reason.name;
     }
 
     return (
       <li>
-        {lovedOneName}
+        {reasonName}
         {removeButton}
         {editButton}
         {saveButton}
@@ -144,11 +136,16 @@ class LovedOne extends Component {
   }
 }
 
-LovedOne.propTypes = {
+Reason.propTypes = {
+  reason: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+  }).isRequired,
   lovedOne: PropTypes.shape({
+    email: PropTypes.string,
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
 };
 
-export default LovedOne;
+export default Reason;
