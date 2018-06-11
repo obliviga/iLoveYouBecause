@@ -29,6 +29,7 @@ class Dashboard extends Component {
         .collection('users')
         .doc(`${user.email}`)
         .collection('lovedOnes')
+        .orderBy('createdAt', 'desc')
         .onSnapshot(
           call => {
             const lovedOnes = call.docs.map(doc => doc.data());
@@ -80,6 +81,7 @@ class Dashboard extends Component {
         name: this.state.nameInputValue,
         email: this.state.emailInputValue,
         id: newLovedOne.id,
+        createdAt: Date.now(),
       });
 
       this.setState({
