@@ -37,11 +37,9 @@ class LovedOneProfile extends Component {
 
     auth.onAuthStateChanged(user => {
       db
-        .collection('users')
-        .doc(`${user.email}`)
-        .collection('lovedOnes')
-        .doc(location.state.lovedOne.id)
         .collection('reasons')
+        .where('createdBy', '==', user.email)
+        .where('createdFor', '==', location.state.lovedOne.id)
         .onSnapshot(
           call => {
             const reasons = call.docs.map(doc => doc.data());
@@ -56,15 +54,14 @@ class LovedOneProfile extends Component {
 
     auth.onAuthStateChanged(user => {
       const newReason = db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(location.state.lovedOne.id)
         .collection('reasons')
         .doc();
 
       newReason.set({
         name: this.state.inputValueReason,
+        createdAt: Date.now(),
+        createdFor: location.state.lovedOne.id,
+        createdBy: user.email,
         id: newReason.id,
       });
 
@@ -145,12 +142,11 @@ class LovedOneProfile extends Component {
           <Reason
             key={reason.id}
             reason={reason}
-            lovedOne={location.state.lovedOne}
           />
         ))
       );
 
-      reasonBlurb = 'Here are the reasons why you love this person:';
+      reasonBlurb = `Here are the reasons why you love ${lovedOneName}:`;
     } else {
       reasonBlurb = `Add some reasons why you love ${lovedOneName}`;
     }
@@ -208,6 +204,7 @@ class LovedOneProfile extends Component {
         {saveLovedOneButton}
         <p>Name: {lovedOneName}</p>
         <p>Email: {lovedOneEmail}</p>
+        <h2>{reasonBlurb}</h2>
         <Input
           value={this.state.inputValueReason}
           placeholder="Because your hair is awesome"

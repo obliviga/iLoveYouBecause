@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
 import { db, auth } from '../firebase/firebase';
 import Button from '../components/Button/Button';
@@ -24,18 +23,12 @@ class Reason extends Component {
   }
 
   removeReason() {
-    const { reason, lovedOne } = this.props;
+    const { reason } = this.props;
 
-    auth.onAuthStateChanged(user => {
-      db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(lovedOne.id)
-        .collection('reasons')
-        .doc(reason.id)
-        .delete();
-    });
+    db
+      .collection('reasons')
+      .doc(reason.id)
+      .delete();
   }
 
   handleChange(event) {
@@ -58,22 +51,16 @@ class Reason extends Component {
   }
 
   saveEdit() {
-    const { reason, lovedOne } = this.props;
+    const { reason } = this.props;
 
     this.setState({ editMode: false });
 
-    auth.onAuthStateChanged(user => {
-      db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(lovedOne.id)
-        .collection('reasons')
-        .doc(reason.id)
-        .update({
-          name: this.state.inputValue,
-        });
-    });
+    db
+      .collection('reasons')
+      .doc(reason.id)
+      .update({
+        name: this.state.inputValue,
+      });
   }
 
   render() {
@@ -138,11 +125,6 @@ class Reason extends Component {
 
 Reason.propTypes = {
   reason: PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
-  }).isRequired,
-  lovedOne: PropTypes.shape({
-    email: PropTypes.string,
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
