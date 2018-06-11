@@ -40,6 +40,7 @@ class LovedOneProfile extends Component {
         .collection('reasons')
         .where('createdBy', '==', user.email)
         .where('createdFor', '==', location.state.lovedOne.id)
+        .orderBy('createdAt', 'desc')
         .onSnapshot(
           call => {
             const reasons = call.docs.map(doc => doc.data());
