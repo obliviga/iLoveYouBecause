@@ -82,6 +82,8 @@ class Dashboard extends Component {
         email: this.state.emailInputValue,
         id: newLovedOne.id,
         createdAt: Date.now(),
+        frequency: '60000',
+        sending: false,
       });
 
       this.setState({

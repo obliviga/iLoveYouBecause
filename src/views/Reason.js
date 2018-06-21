@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { db, auth } from '../firebase/firebase';
+import { db } from '../firebase/firebase';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 
@@ -64,12 +64,13 @@ class Reason extends Component {
   }
 
   render() {
-    const { reason } = this.props;
+    const { reason, sent } = this.props;
 
     let removeButton;
     let editButton;
     let saveButton;
     let reasonName;
+    let sentText;
 
     if (this.state.editMode === true) {
       removeButton = (
@@ -112,9 +113,14 @@ class Reason extends Component {
       reasonName = reason.name;
     }
 
+    if (sent === true) {
+      sentText = <span>(Sent)</span>;
+    }
+
     return (
       <li>
         {reasonName}
+        {sentText}
         {removeButton}
         {editButton}
         {saveButton}
@@ -128,6 +134,11 @@ Reason.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
+  sent: PropTypes.bool,
+};
+
+Reason.defaultProps = {
+  sent: false,
 };
 
 export default Reason;
