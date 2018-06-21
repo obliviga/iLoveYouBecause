@@ -15,6 +15,7 @@ class LovedOneProfile extends Component {
 
     const { location } = this.props;
 
+    // Getting loved one's data
     auth.onAuthStateChanged(user => {
       const lovedOneRef = db
         .collection('users')
@@ -57,6 +58,8 @@ class LovedOneProfile extends Component {
   componentDidMount() {
     const { location } = this.props;
 
+    // Getting reasons that were created by the current user and
+    // created for the currently viewed loved one
     auth.onAuthStateChanged(user => {
       db
         .collection('reasons')
@@ -75,11 +78,13 @@ class LovedOneProfile extends Component {
   addReason() {
     const { location } = this.props;
 
+    // Create a collection of reasons if one doesn't already exist
     auth.onAuthStateChanged(user => {
       const newReason = db
         .collection('reasons')
         .doc();
 
+      // A reason should have the following fields
       newReason.set({
         name: this.state.inputValueReason,
         createdAt: Date.now(),
@@ -92,6 +97,12 @@ class LovedOneProfile extends Component {
       this.setState({
         inputValueReason: '',
       });
+
+      // Need to reset sending to false, just in case a reason was added
+      // and sending stayed true
+      if (this.state.reasons.length === 0) {
+        this.setState({ sending: false });
+      }
     });
   }
 
@@ -134,6 +145,7 @@ class LovedOneProfile extends Component {
   saveLovedOne() {
     const { location } = this.props;
 
+    // Updating name and email of loved one in the database
     auth.onAuthStateChanged(user => {
       db
         .collection('users')
@@ -149,12 +161,11 @@ class LovedOneProfile extends Component {
     this.setState({ editMode: false });
   }
 
+  // TODO: Figure it out.
   sendReason() {
     const { location } = this.props;
 
     if (this.state.reasons.length > 0) {
-      console.log(this.state.reasons[0].sent);
-
       auth.onAuthStateChanged(user => {
         db
           .collection('reasons')
@@ -169,6 +180,7 @@ class LovedOneProfile extends Component {
     }
   }
 
+  // TODO: Figure it out.
   startSendingReasons() {
     const { location } = this.props;
     this.setState({ sending: true });
@@ -192,6 +204,7 @@ class LovedOneProfile extends Component {
     // );
   }
 
+  // Updating the sending state and field to be false
   stopSendingReasons() {
     const { location } = this.props;
     this.setState({ sending: false });
@@ -271,25 +284,17 @@ class LovedOneProfile extends Component {
       reasonBlurb = `Here are the reasons why you love ${lovedOneName}:`;
     } else {
       reasonBlurb = `Add some reasons why you love ${lovedOneName}`;
-
-      // auth.onAuthStateChanged(user => {
-      //   db
-      //     .collection('users')
-      //     .doc(user.email)
-      //     .collection('lovedOnes')
-      //     .doc(location.state.lovedOne.id)
-      //     .update({
-      //       sending: false,
-      //     });
-      // });
     }
 
+    // Validation for inputting reason
     if (this.state.inputValueReason === '') {
       inputValid = false;
     } else {
       inputValid = true;
     }
 
+    // Show some buttons when edit mode is true,
+    // and only show edit button when edit mode is false.
     if (this.state.editMode === true) {
       editLovedOneButton = (
         <Button
