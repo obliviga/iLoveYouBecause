@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { db } from '../firebase/firebase';
+import { db, auth } from '../firebase/firebase';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 
@@ -23,12 +23,35 @@ class Reason extends Component {
   }
 
   removeReason() {
-    const { reason } = this.props;
+    const { reason, location } = this.props;
 
     db
       .collection('reasons')
       .doc(reason.id)
       .delete();
+
+    auth.onAuthStateChanged(user => {
+      db
+        .collection('reasons')
+        .where('createdBy', '==', user.email)
+        .where('createdFor', '==', location.state.lovedOne.id)
+        .onSnapshot(
+          call => {
+            const reasons = call.docs.map(doc => doc.data());
+
+            if (reasons.length === 0) {
+              db
+                .collection('users')
+                .doc(user.email)
+                .collection('lovedOnes')
+                .doc(location.state.lovedOne.id)
+                .update({
+                  sending: false,
+                });
+            }
+          },
+        );
+    });
   }
 
   handleChange(event) {
@@ -135,6 +158,11 @@ Reason.propTypes = {
     name: PropTypes.string,
   }).isRequired,
   sent: PropTypes.bool,
+  location: PropTypes.shape({
+    hash: PropTypes.string,
+    key: PropTypes.string,
+    pathname: PropTypes.string,
+  }).isRequired,
 };
 
 Reason.defaultProps = {

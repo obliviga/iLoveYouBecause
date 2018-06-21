@@ -92,12 +92,6 @@ class LovedOneProfile extends Component {
       this.setState({
         inputValueReason: '',
       });
-
-      if (this.state.reasons.length === 0) {
-        this.setState({
-          sending: false,
-        });
-      }
     });
   }
 
@@ -157,8 +151,6 @@ class LovedOneProfile extends Component {
 
   sendReason() {
     const { location } = this.props;
-
-    // get Reasons where sent = false
 
     if (this.state.reasons.length > 0) {
       console.log(this.state.reasons[0].sent);
@@ -257,6 +249,7 @@ class LovedOneProfile extends Component {
             key={reason.id}
             reason={reason}
             sent={location.state.lovedOne.sent}
+            location={location}
           />
         ))
       );
