@@ -8,28 +8,13 @@ import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 import Reason from './Reason';
+import ArchivedReason from './ArchivedReason';
 
 class LovedOneProfile extends Component {
   constructor(props) {
     super(props);
 
     const { location } = this.props;
-
-    // Getting loved one's data
-    auth.onAuthStateChanged(user => {
-      const lovedOneRef = db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(location.state.lovedOne.id);
-
-      lovedOneRef.get().then((doc) => {
-        this.setState({
-          frequency: doc.data().frequency,
-          sending: doc.data().sending,
-        });
-      });
-    });
 
     this.handleChangeReason = this.handleChangeReason.bind(this);
     this.handleChangeLovedOneName = this.handleChangeLovedOneName.bind(this);
@@ -42,12 +27,11 @@ class LovedOneProfile extends Component {
     this.startSendingReasons = this.startSendingReasons.bind(this);
     this.stopSendingReasons = this.stopSendingReasons.bind(this);
     this.handleChangeFrequency = this.handleChangeFrequency.bind(this);
-    this.sendReason = this.sendReason.bind(this);
     this.getFirstReason = this.getFirstReason.bind(this);
-
 
     this.state = {
       reasons: [],
+      archivedReasons: [],
       inputValueReason: '',
       inputValueLovedOneName: location.state.lovedOne.name,
       inputValueLovedOneEmail: location.state.lovedOne.email,
@@ -56,13 +40,29 @@ class LovedOneProfile extends Component {
       sending: location.state.lovedOne.sending,
       firstReasonId: null,
     };
+
+    // Getting loved one's data
+    auth.onAuthStateChanged(user => {
+      const lovedOneRef = db
+        .collection('users')
+        .doc(user.email)
+        .collection('lovedOnes')
+        .doc(location.state.lovedOne.id);
+
+      // Ensuring persistance of changed fields
+      lovedOneRef.get().then((doc) => {
+        this.setState({
+          frequency: doc.data().frequency,
+          sending: doc.data().sending,
+        });
+      });
+    });
   }
 
   componentDidMount() {
     const { location } = this.props;
-
-    // Getting reasons that were created by the current user and
-    // created for the currently viewed loved one
+    // Getting both archived and unarchived reasons that were created by
+    // the current user and created for the currently viewed loved one
     auth.onAuthStateChanged(user => {
       db
         .collection('reasons')
@@ -75,6 +75,18 @@ class LovedOneProfile extends Component {
             this.setState({ reasons });
           },
         );
+      db
+        .collection('archive')
+        .where('createdBy', '==', user.email)
+        .where('createdFor', '==', location.state.lovedOne.id)
+        .orderBy('archivedAt', 'desc')
+        .onSnapshot(
+          call => {
+            const archivedReasons = call.docs.map(doc => doc.data());
+
+            this.setState({ archivedReasons });
+          },
+        );
     });
   }
 
@@ -82,6 +94,8 @@ class LovedOneProfile extends Component {
     const { location } = this.props;
 
     if (this.state.reasons.length > 0) {
+      // If reasons exist, get the first one that isn't sent.
+      // Then store that reason in the state
       auth.onAuthStateChanged(user => {
         db
           .collection('reasons')
@@ -97,9 +111,11 @@ class LovedOneProfile extends Component {
             });
           })
           .catch((error) => {
-            console.log("Error getting documents: ", error);
+            console.log('Error getting documents: ', error);
           });
 
+        // When the state is not null,
+        // update the sent field to be true for that reason
         if (this.state.firstReasonId !== null) {
           db
             .collection('reasons')
@@ -110,14 +126,13 @@ class LovedOneProfile extends Component {
         }
       });
     } else {
+      // If there are no reasons, then should stop sending them.
       this.stopSendingReasons();
-      alert('Please add a reason to continue.');
     }
   }
 
   addReason() {
     const { location } = this.props;
-
     // Create a collection of reasons if one doesn't already exist
     auth.onAuthStateChanged(user => {
       const newReason = db
@@ -198,16 +213,10 @@ class LovedOneProfile extends Component {
         });
     });
 
+    // When loved one's info is saved, should exit edit mode
     this.setState({ editMode: false });
   }
 
-  // TODO: Figure it out.
-  // Take the first reason and make it a sent one, then send it.
-  sendReason() {
-    this.getFirstReason();
-  }
-
-  // TODO: Figure it out.
   startSendingReasons() {
     const { location } = this.props;
     this.setState({ sending: true });
@@ -223,13 +232,15 @@ class LovedOneProfile extends Component {
         });
     });
 
+    // Create a timer that calls getFirstReason() every given frequency
     this.timerId = setInterval(
-      () => this.sendReason(),
+      () => this.getFirstReason(),
       this.state.frequency,
+      console.log('ok')
     );
   }
 
-  // Updating the sending state and field to be false
+  // Updates the sending state and field to be false, then clears the timer.
   stopSendingReasons() {
     const { location } = this.props;
     this.setState({ sending: false });
@@ -279,6 +290,8 @@ class LovedOneProfile extends Component {
     let disableFrequencyAndSend;
     let startSendingButton;
     let stopSendingButton;
+    let archivedReasons;
+    let archivedContent;
 
     if (this.state.reasons.length > 0) {
       reasons = (
@@ -309,6 +322,21 @@ class LovedOneProfile extends Component {
       reasonBlurb = `Here are the reasons why you love ${lovedOneName}:`;
     } else {
       reasonBlurb = `Add some reasons why you love ${lovedOneName}`;
+    }
+
+    if (this.state.archivedReasons.length > 0) {
+      archivedReasons = (
+        this.state.archivedReasons.map((archivedReason) => (
+          <ArchivedReason
+            key={archivedReason.id}
+            archivedReason={archivedReason}
+          />
+        ))
+      );
+
+      archivedContent = (
+        <h3>You have sent the following reasons to {lovedOneName}:</h3>
+      );
     }
 
     // Validation for inputting reason
@@ -400,6 +428,8 @@ class LovedOneProfile extends Component {
         <ul>{sentReasons}</ul>
         {startSendingButton}
         {stopSendingButton}
+        {archivedContent}
+        <ul>{archivedReasons}</ul>
       </div>
     );
   }

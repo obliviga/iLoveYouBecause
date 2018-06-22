@@ -20,6 +20,7 @@ class Reason extends Component {
     this.cancelEdit = this.cancelEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.archiveReason = this.archiveReason.bind(this);
   }
 
   removeReason() {
@@ -86,14 +87,33 @@ class Reason extends Component {
       });
   }
 
+  archiveReason() {
+    const { reason, location } = this.props;
+
+    const newArchivedReason =
+      db
+        .collection('archive')
+        .doc();
+
+    auth.onAuthStateChanged(user => {
+      // An archived reason should have the following fields
+      newArchivedReason.set({
+        name: reason.name,
+        archivedAt: Date.now(),
+        createdFor: location.state.lovedOne.id,
+        createdBy: user.email,
+        id: newArchivedReason.id,
+      });
+    });
+  }
+
   render() {
-    const { reason } = this.props;
+    const { reason, location } = this.props;
 
     let removeButton;
     let editButton;
     let saveButton;
     let reasonName;
-    let sentText;
 
     if (this.state.editMode === true) {
       removeButton = (
@@ -137,13 +157,20 @@ class Reason extends Component {
     }
 
     if (reason.sent === true) {
-      sentText = <span> (Sent)</span>;
+      console.log('1');
+      this.archiveReason();
+      this.removeReason();
+      //
+      //   db
+      //     .collection('reasons')
+      //     .doc(reason.id)
+      //     .delete();
+      // });
     }
 
     return (
       <li>
         {reasonName}
-        {sentText}
         {removeButton}
         {editButton}
         {saveButton}
