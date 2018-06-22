@@ -43,6 +43,8 @@ class LovedOneProfile extends Component {
     this.stopSendingReasons = this.stopSendingReasons.bind(this);
     this.handleChangeFrequency = this.handleChangeFrequency.bind(this);
     this.sendReason = this.sendReason.bind(this);
+    this.getFirstReason = this.getFirstReason.bind(this);
+
 
     this.state = {
       reasons: [],
@@ -52,6 +54,7 @@ class LovedOneProfile extends Component {
       editMode: false,
       frequency: '60000',
       sending: location.state.lovedOne.sending,
+      firstReasonId: null,
     };
   }
 
@@ -73,6 +76,43 @@ class LovedOneProfile extends Component {
           },
         );
     });
+  }
+
+  getFirstReason() {
+    const { location } = this.props;
+
+    if (this.state.reasons.length > 0) {
+      auth.onAuthStateChanged(user => {
+        db
+          .collection('reasons')
+          .where('createdBy', '==', user.email)
+          .where('createdFor', '==', location.state.lovedOne.id)
+          .where('sent', '==', false)
+          .orderBy('createdAt', 'desc')
+          .limit(1)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              this.setState({ firstReasonId: doc.id });
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
+
+        if (this.state.firstReasonId !== null) {
+          db
+            .collection('reasons')
+            .doc(this.state.firstReasonId)
+            .update({
+              sent: true,
+            });
+        }
+      });
+    } else {
+      this.stopSendingReasons();
+      alert('Please add a reason to continue.');
+    }
   }
 
   addReason() {
@@ -162,22 +202,9 @@ class LovedOneProfile extends Component {
   }
 
   // TODO: Figure it out.
+  // Take the first reason and make it a sent one, then send it.
   sendReason() {
-    const { location } = this.props;
-
-    if (this.state.reasons.length > 0) {
-      auth.onAuthStateChanged(user => {
-        db
-          .collection('reasons')
-          .doc(user.email)
-          .collection('lovedOnes')
-          .doc(location.state.lovedOne.id)
-          .update({
-            name: this.state.inputValueLovedOneName,
-            email: this.state.inputValueLovedOneEmail,
-          });
-      });
-    }
+    this.getFirstReason();
   }
 
   // TODO: Figure it out.
@@ -196,12 +223,10 @@ class LovedOneProfile extends Component {
         });
     });
 
-    this.sendReason();
-
-    // this.timerId = setInterval(
-    //   () => this.sendReason(),
-    //   this.state.frequency,
-    // );
+    this.timerId = setInterval(
+      () => this.sendReason(),
+      this.state.frequency,
+    );
   }
 
   // Updating the sending state and field to be false
@@ -220,7 +245,7 @@ class LovedOneProfile extends Component {
         });
     });
 
-    // clearInterval(this.timerId);
+    clearInterval(this.timerId);
   }
 
   handleChangeFrequency(event) {

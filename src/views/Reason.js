@@ -87,7 +87,7 @@ class Reason extends Component {
   }
 
   render() {
-    const { reason, sent } = this.props;
+    const { reason } = this.props;
 
     let removeButton;
     let editButton;
@@ -136,8 +136,8 @@ class Reason extends Component {
       reasonName = reason.name;
     }
 
-    if (sent === true) {
-      sentText = <span>(Sent)</span>;
+    if (reason.sent === true) {
+      sentText = <span> (Sent)</span>;
     }
 
     return (
@@ -157,16 +157,11 @@ Reason.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
-  sent: PropTypes.bool,
   location: PropTypes.shape({
     hash: PropTypes.string,
     key: PropTypes.string,
     pathname: PropTypes.string,
   }).isRequired,
-};
-
-Reason.defaultProps = {
-  sent: false,
 };
 
 export default Reason;
