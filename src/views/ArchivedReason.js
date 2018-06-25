@@ -16,8 +16,6 @@ class Reason extends Component {
   removeArchivedReason() {
     const { archivedReason } = this.props;
 
-    console.log(archivedReason.id);
-
     db
       .collection('archive')
       .doc(archivedReason.id)

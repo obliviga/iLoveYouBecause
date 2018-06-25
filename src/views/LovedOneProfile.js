@@ -43,19 +43,7 @@ class LovedOneProfile extends Component {
 
     // Getting loved one's data
     auth.onAuthStateChanged(user => {
-      const lovedOneRef = db
-        .collection('users')
-        .doc(user.email)
-        .collection('lovedOnes')
-        .doc(location.state.lovedOne.id);
 
-      // Ensuring persistance of changed fields
-      lovedOneRef.get().then((doc) => {
-        this.setState({
-          frequency: doc.data().frequency,
-          sending: doc.data().sending,
-        });
-      });
     });
   }
 
@@ -64,6 +52,12 @@ class LovedOneProfile extends Component {
     // Getting both archived and unarchived reasons that were created by
     // the current user and created for the currently viewed loved one
     auth.onAuthStateChanged(user => {
+      const lovedOneRef = db
+        .collection('users')
+        .doc(user.email)
+        .collection('lovedOnes')
+        .doc(location.state.lovedOne.id);
+
       db
         .collection('reasons')
         .where('createdBy', '==', user.email)
@@ -87,6 +81,19 @@ class LovedOneProfile extends Component {
             this.setState({ archivedReasons });
           },
         );
+
+      // Ensuring persistance of changed fields
+      lovedOneRef.get()
+        .then((doc) => {
+          this.setState({
+            frequency: doc.data().frequency,
+            sending: doc.data().sending,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          console.log('doc.data().frequency does not exist');
+        });
     });
   }
 
@@ -236,7 +243,6 @@ class LovedOneProfile extends Component {
     this.timerId = setInterval(
       () => this.getFirstReason(),
       this.state.frequency,
-      console.log('ok')
     );
   }
 
@@ -259,6 +265,7 @@ class LovedOneProfile extends Component {
     clearInterval(this.timerId);
   }
 
+  // Update the frequency state and field, then stop sending
   handleChangeFrequency(event) {
     const { location } = this.props;
 
@@ -274,6 +281,8 @@ class LovedOneProfile extends Component {
     });
 
     this.setState({ frequency: event.target.value });
+
+    this.stopSendingReasons();
   }
 
   render() {

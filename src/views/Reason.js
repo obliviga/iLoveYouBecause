@@ -157,15 +157,13 @@ class Reason extends Component {
     }
 
     if (reason.sent === true) {
-      console.log('1');
       this.archiveReason();
       this.removeReason();
-      //
-      //   db
-      //     .collection('reasons')
-      //     .doc(reason.id)
-      //     .delete();
-      // });
+
+      db
+        .collection('reasons')
+        .doc(reason.id)
+        .delete();
     }
 
     return (
