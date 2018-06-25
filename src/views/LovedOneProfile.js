@@ -40,11 +40,6 @@ class LovedOneProfile extends Component {
       sending: location.state.lovedOne.sending,
       firstReasonId: null,
     };
-
-    // Getting loved one's data
-    auth.onAuthStateChanged(user => {
-
-    });
   }
 
   componentDidMount() {
