@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import AWS from 'aws-sdk';
 
 import { db, auth } from '../firebase/firebase';
 import Button from '../components/Button/Button';
@@ -20,39 +21,16 @@ class Reason extends Component {
     this.cancelEdit = this.cancelEdit.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.archiveReason = this.archiveReason.bind(this);
+    this.sendReason = this.sendReason.bind(this);
   }
 
   removeReason() {
-    const { reason, location } = this.props;
+    const { reason } = this.props;
 
     db
       .collection('reasons')
       .doc(reason.id)
       .delete();
-
-    auth.onAuthStateChanged(user => {
-      db
-        .collection('reasons')
-        .where('createdBy', '==', user.email)
-        .where('createdFor', '==', location.state.lovedOne.id)
-        .onSnapshot(
-          call => {
-            const reasons = call.docs.map(doc => doc.data());
-
-            if (reasons.length === 0) {
-              db
-                .collection('users')
-                .doc(user.email)
-                .collection('lovedOnes')
-                .doc(location.state.lovedOne.id)
-                .update({
-                  sending: false,
-                });
-            }
-          },
-        );
-    });
   }
 
   handleChange(event) {
@@ -87,32 +65,66 @@ class Reason extends Component {
       });
   }
 
-  archiveReason() {
+  sendReason() {
     const { reason, location } = this.props;
-
-    const newArchivedReason =
-      db
-        .collection('archive')
-        .doc();
+    const lovedOneEmail = location.state.lovedOne.email;
 
     auth.onAuthStateChanged(user => {
-      // An archived reason should have the following fields
-      newArchivedReason.set({
-        name: reason.name,
-        archivedAt: Date.now(),
-        createdFor: location.state.lovedOne.id,
-        createdBy: user.email,
-        id: newArchivedReason.id,
+      AWS.config.update({
+        accessKeyId: 'AKIAIYZ46E6P4HTQ33GQ',
+        secretAccessKey: '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',
+        region: 'us-west-2',
       });
+
+      const params = {
+        Destination: {
+          ToAddresses: [lovedOneEmail],
+        },
+        Message: {
+          Body: {
+            Html: {
+              Charset: 'UTF-8',
+              Data: 'what up, fucker! (html)',
+            },
+            Text: {
+              Charset: 'UTF-8',
+              Data: 'what up, fucker! (text)',
+            },
+          },
+          Subject: {
+            Charset: 'UTF-8',
+            Data: `${user.name} loves you, here why!`,
+          },
+        },
+        Source: 'obliviga@gmail.com',
+        ReplyToAddresses: [
+          'obliviga@gmail.com',
+        ],
+      };
+
+      // Create the promise and SES service object
+      const sendPromise = new AWS.SES({
+        apiVersion: '2010-12-01',
+      }).sendEmail(params).promise();
+
+      // Handle promise's fulfilled/rejected states
+      sendPromise.then(
+        (data) => {
+          console.log(data.MessageId);
+        }).catch(
+        (err) => {
+          console.error(err, err.stack);
+        });
     });
   }
 
   render() {
-    const { reason, location } = this.props;
+    const { reason } = this.props;
 
     let removeButton;
     let editButton;
     let saveButton;
+    let sendButton;
     let reasonName;
 
     if (this.state.editMode === true) {
@@ -153,17 +165,14 @@ class Reason extends Component {
         />
       );
 
+      sendButton = (
+        <Button
+          onClick={this.sendReason}
+          text="Send"
+        />
+      );
+
       reasonName = reason.name;
-    }
-
-    if (reason.sent === true) {
-      this.archiveReason();
-      this.removeReason();
-
-      db
-        .collection('reasons')
-        .doc(reason.id)
-        .delete();
     }
 
     return (
@@ -172,6 +181,7 @@ class Reason extends Component {
         {removeButton}
         {editButton}
         {saveButton}
+        {sendButton}
       </li>
     );
   }
