@@ -71,8 +71,8 @@ class Reason extends Component {
 
     auth.onAuthStateChanged(user => {
       AWS.config.update({
-        accessKeyId: 'AKIAIYZ46E6P4HTQ33GQ',
-        secretAccessKey: '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',
+        accessKeyId: `${process.env.REACT_APP_SES_API_KEY_PUBLIC}`,
+        secretAccessKey: `${process.env.REACT_APP_SES_API_KEY_PUBLIC}`,
         region: 'us-west-2',
       });
 
