@@ -14,6 +14,7 @@ class Dashboard extends Component {
       lovedOnes: [],
       nameInputValue: '',
       emailInputValue: '',
+      firstName: '',
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -21,6 +22,25 @@ class Dashboard extends Component {
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handleKeyPressEmail = this.handleKeyPressEmail.bind(this);
     this.addLovedOne = this.addLovedOne.bind(this);
+
+    auth.onAuthStateChanged(user => {
+      const userRef = db
+        .collection('users')
+        .doc(`${user.email}`);
+
+      // Getting user's first name
+      userRef.get().then((doc) => {
+        if (doc.exists) {
+          const firstName = doc.data().firstName;
+
+          this.setState({ firstName });
+        } else {
+          console.log('No such document!');
+        }
+      }).catch((error) => {
+        console.log('Error getting document:', error);
+      });
+    });
   }
 
   componentDidMount() {
@@ -136,6 +156,7 @@ class Dashboard extends Component {
           text="Add"
           disabled={!inputsValid}
         />
+        <h1>Hey {this.state.firstName}!</h1>
         <h2>{welcomeBlurb}</h2>
         <ul>{lovedOnes}</ul>
       </div>

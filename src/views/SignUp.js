@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import * as routes from '../constants/routes';
-import { auth } from '../firebase';
+import { db, auth } from '../firebase/firebase';
 import byPropKey from '../utils/byPropKey';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
 
 const INITIAL_STATE = {
-  username: '',
+  firstName: '',
+  lastName: '',
   email: '',
   passwordOne: '',
   passwordTwo: '',
@@ -20,7 +21,8 @@ class SignUp extends Component {
     super(props);
 
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
-    this.handleOnChangeUsername = this.handleOnChangeUsername.bind(this);
+    this.handleOnChangeFirstName = this.handleOnChangeFirstName.bind(this);
+    this.handleOnChangeLastName = this.handleOnChangeLastName.bind(this);
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
     this.handleOnChangePasswordOne = this.handleOnChangePasswordOne.bind(this);
     this.handleOnChangePasswordTwo = this.handleOnChangePasswordTwo.bind(this);
@@ -31,16 +33,36 @@ class SignUp extends Component {
     const {
       email,
       passwordOne,
+      firstName,
+      lastName,
     } = this.state;
 
     const {
       history,
     } = this.props;
 
-    auth.doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(() => {
+    auth.createUserWithEmailAndPassword(email, passwordOne)
+      .then((user) => {
         this.setState(() => ({ ...INITIAL_STATE }));
+
+        // Redirect to dashboard
         history.push(routes.DASHBOARD);
+
+        // Add user info in database on successful sign up
+        const newUser = db
+          .collection('users')
+          .doc(email);
+
+        newUser.set({
+          firstName,
+          lastName,
+          email,
+        });
+
+        // TODO: Updates the displayName to be first name (Not working)
+        user.updateProfile({
+          displayName: firstName,
+        });
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -49,8 +71,12 @@ class SignUp extends Component {
     event.preventDefault();
   }
 
-  handleOnChangeUsername(event) {
-    this.setState(byPropKey('username', event.target.value));
+  handleOnChangeFirstName(event) {
+    this.setState(byPropKey('firstName', event.target.value));
+  }
+
+  handleOnChangeLastName(event) {
+    this.setState(byPropKey('lastName', event.target.value));
   }
 
   handleOnChangeEmail(event) {
@@ -67,7 +93,8 @@ class SignUp extends Component {
 
   render() {
     const {
-      username,
+      firstName,
+      lastName,
       email,
       passwordOne,
       passwordTwo,
@@ -78,15 +105,22 @@ class SignUp extends Component {
       passwordOne !== passwordTwo ||
       passwordOne === '' ||
       email === '' ||
-      username === '';
+      firstName === '' ||
+      lastName === '';
 
     return (
       <form onSubmit={this.handleOnSubmit}>
         <Input
-          value={username}
-          onChange={this.handleOnChangeUsername}
+          value={firstName}
+          onChange={this.handleOnChangeFirstName}
           type="text"
-          placeholder="Full Name"
+          placeholder="First Name"
+        />
+        <Input
+          value={lastName}
+          onChange={this.handleOnChangeLastName}
+          type="text"
+          placeholder="Last Name"
         />
         <Input
           value={email}
