@@ -136,6 +136,11 @@ class Dashboard extends Component {
       inputsValid = true;
     }
 
+    // Prevent first name from appearing after other components have loaded
+    if (!this.state.firstName) {
+      return <div />;
+    }
+
     return (
       <div>
         <Input
