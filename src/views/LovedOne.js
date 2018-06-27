@@ -149,6 +149,7 @@ LovedOne.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
   }).isRequired,
+  firstName: PropTypes.string.isRequired,
 };
 
 export default LovedOne;

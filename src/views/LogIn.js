@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import byPropKey from '../utils/byPropKey';
 import { auth } from '../firebase';
@@ -100,3 +101,11 @@ class LogIn extends Component {
 }
 
 export default withRouter(LogIn);
+
+LogIn.propTypes = {
+  history: PropTypes.shape({}),
+};
+
+LogIn.defaultProps = {
+  history: {},
+};

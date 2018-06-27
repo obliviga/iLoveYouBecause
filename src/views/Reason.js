@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AWS from 'aws-sdk';
 
-import { db, auth } from '../firebase/firebase';
+import { db } from '../firebase/firebase';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 
