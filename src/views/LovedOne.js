@@ -15,6 +15,7 @@ class LovedOne extends Component {
       inputValue: '',
       disableSave: true,
       lovedOne: '',
+      firstName: this.props.firstName,
     };
 
     this.removeLovedOne = this.removeLovedOne.bind(this);
@@ -74,7 +75,7 @@ class LovedOne extends Component {
   }
 
   render() {
-    const { lovedOne } = this.props;
+    const { lovedOne, firstName } = this.props;
 
     let removeButton;
     let editButton;
@@ -124,7 +125,7 @@ class LovedOne extends Component {
           to={{
             pathname: `${routes.LOVEDONEPROFILE}`,
             hash: `#${lovedOne.name}`,
-            state: { lovedOne },
+            state: { lovedOne, firstName },
           }}
         >
           {lovedOne.name}

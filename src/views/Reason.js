@@ -69,53 +69,51 @@ class Reason extends Component {
     const { reason, location } = this.props;
     const lovedOneEmail = location.state.lovedOne.email;
 
-    auth.onAuthStateChanged(user => {
-      AWS.config.update({
-        accessKeyId: `${process.env.REACT_APP_SES_API_KEY_PUBLIC}`,
-        secretAccessKey: `${process.env.REACT_APP_SES_API_KEY_PUBLIC}`,
-        region: 'us-west-2',
-      });
-
-      const params = {
-        Destination: {
-          ToAddresses: [lovedOneEmail],
-        },
-        Message: {
-          Body: {
-            Html: {
-              Charset: 'UTF-8',
-              Data: 'what up, fucker! (html)',
-            },
-            Text: {
-              Charset: 'UTF-8',
-              Data: 'what up, fucker! (text)',
-            },
-          },
-          Subject: {
-            Charset: 'UTF-8',
-            Data: `${user.name} loves you, here why!`,
-          },
-        },
-        Source: 'obliviga@gmail.com',
-        ReplyToAddresses: [
-          'obliviga@gmail.com',
-        ],
-      };
-
-      // Create the promise and SES service object
-      const sendPromise = new AWS.SES({
-        apiVersion: '2010-12-01',
-      }).sendEmail(params).promise();
-
-      // Handle promise's fulfilled/rejected states
-      sendPromise.then(
-        (data) => {
-          console.log(data.MessageId);
-        }).catch(
-        (err) => {
-          console.error(err, err.stack);
-        });
+    AWS.config.update({
+      accessKeyId: `${process.env.REACT_APP_SES_API_KEY_PUBLIC}`,
+      secretAccessKey: `${process.env.REACT_APP_SES_API_KEY_PRIVATE}`,
+      region: 'us-west-2',
     });
+
+    const params = {
+      Destination: {
+        ToAddresses: [lovedOneEmail],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: reason.name,
+          },
+          Text: {
+            Charset: 'UTF-8',
+            Data: reason.name,
+          },
+        },
+        Subject: {
+          Charset: 'UTF-8',
+          Data: `${location.state.firstName} loves you, here why:`,
+        },
+      },
+      Source: 'obliviga@gmail.com',
+      ReplyToAddresses: [
+        'obliviga@gmail.com',
+      ],
+    };
+
+    // Create the promise and SES service object
+    const sendPromise = new AWS.SES({
+      apiVersion: '2010-12-01',
+    }).sendEmail(params).promise();
+
+    // Handle promise's fulfilled/rejected states
+    sendPromise.then(
+      (data) => {
+        console.log(data.MessageId);
+      }).catch(
+      (err) => {
+        console.error(err, err.stack);
+      });
   }
 
   render() {
