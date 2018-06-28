@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+import * as routes from '../constants/routes';
 import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
@@ -30,6 +31,7 @@ class LovedOneProfile extends Component {
       inputValueLovedOneName: location.state.lovedOne.name,
       inputValueLovedOneEmail: location.state.lovedOne.email,
       editMode: false,
+      location: this.props.location,
     };
   }
 
@@ -47,6 +49,18 @@ class LovedOneProfile extends Component {
           call => {
             const reasons = call.docs.map(doc => doc.data());
             this.setState({ reasons });
+          },
+        );
+
+      db
+        .collection('archive')
+        .where('createdBy', '==', user.email)
+        .where('createdFor', '==', location.state.lovedOne.id)
+        .orderBy('archivedAt', 'desc')
+        .onSnapshot(
+          call => {
+            const archivedReasons = call.docs.map(doc => doc.data());
+            this.setState({ archivedReasons });
           },
         );
     });
@@ -135,17 +149,18 @@ class LovedOneProfile extends Component {
   render() {
     const { location } = this.props;
 
-    let reasons;
-    let sentReasons;
+    let reasonsList;
+    let archivedReasonsList;
     let inputValid;
     let reasonBlurb;
     let editLovedOneButton;
     let saveLovedOneButton;
     let lovedOneName = this.state.inputValueLovedOneName;
     let lovedOneEmail = this.state.inputValueLovedOneEmail;
+    let linkToArchive;
 
     if (this.state.reasons.length > 0) {
-      reasons = (
+      reasonsList = (
         this.state.reasons.map((reason) => (
           <Reason
             key={reason.id}
@@ -211,6 +226,20 @@ class LovedOneProfile extends Component {
       );
     }
 
+    if (this.state.archivedReasons.length > 0) {
+      linkToArchive = (
+        <Link
+          to={{
+            pathname: routes.ARCHIVEDREASONS,
+            hash: `#${lovedOneName}`,
+            state: { location },
+          }}
+        >
+          Sent Reasons
+        </Link>
+      );
+    }
+
     return (
       <div>
         {editLovedOneButton}
@@ -229,8 +258,8 @@ class LovedOneProfile extends Component {
           text="Add"
           disabled={!inputValid}
         />
-        <ul>{reasons}</ul>
-        <ul>{sentReasons}</ul>
+        <ul>{reasonsList}</ul>
+        {linkToArchive}
       </div>
     );
   }

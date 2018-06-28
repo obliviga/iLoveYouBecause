@@ -4,3 +4,4 @@ export const DASHBOARD = '/';
 export const ACCOUNT = '/account';
 export const PASSWORD_FORGET = '/pw-forget';
 export const LOVEDONEPROFILE = '/lovedOne';
+export const ARCHIVEDREASONS = '/archive';

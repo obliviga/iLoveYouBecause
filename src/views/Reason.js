@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import AWS from 'aws-sdk';
 
-import { db } from '../firebase/firebase';
+import { db, auth } from '../firebase/firebase';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 
@@ -22,6 +22,7 @@ class Reason extends Component {
     this.saveEdit = this.saveEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.sendReason = this.sendReason.bind(this);
+    this.archiveReason = this.archiveReason.bind(this);
   }
 
   removeReason() {
@@ -63,6 +64,28 @@ class Reason extends Component {
       .update({
         name: this.state.inputValue,
       });
+  }
+
+  archiveReason() {
+    const { reason, location } = this.props;
+
+    // Create a collection of archived reasons if one doesn't already exist
+    auth.onAuthStateChanged(user => {
+      const newReasonArchive = db
+        .collection('archive')
+        .doc();
+
+      // An archived reason should have the following fields
+      newReasonArchive.set({
+        name: reason.name,
+        archivedAt: Date.now(),
+        createdFor: location.state.lovedOne.id,
+        createdBy: user.email,
+        id: newReasonArchive.id,
+      });
+    });
+
+    this.removeReason();
   }
 
   sendReason() {
@@ -114,6 +137,8 @@ class Reason extends Component {
       (err) => {
         console.error(err, err.stack);
       });
+
+    this.archiveReason();
   }
 
   render() {

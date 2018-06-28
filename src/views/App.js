@@ -8,6 +8,7 @@ import Dashboard from './Dashboard';
 import Account from './Account';
 import Navigation from './Navigation';
 import LovedOneProfile from './LovedOneProfile';
+import ArchivedReasons from './ArchivedReasons';
 import * as routes from '../constants/routes';
 import withAuthentication from '../utils/withAuthentication';
 
@@ -44,6 +45,11 @@ const App = () => (
         exact
         path={routes.LOVEDONEPROFILE}
         component={() => <LovedOneProfile />}
+      />
+      <Route
+        exact
+        path={routes.ARCHIVEDREASONS}
+        component={(location) => <ArchivedReasons location={location} />}
       />
     </div>
   </Router>
