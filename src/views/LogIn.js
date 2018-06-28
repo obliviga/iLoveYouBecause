@@ -6,6 +6,7 @@ import byPropKey from '../utils/byPropKey';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
 import Input from '../components/Input/Input';
+import PasswordInput from '../components/Input/PasswordInput';
 import Button from '../components/Button/Button';
 
 class LogIn extends Component {
@@ -77,11 +78,9 @@ class LogIn extends Component {
             placeholder="Email Address"
           />
 
-          <Input
+          <PasswordInput
             value={password}
             onChange={this.handleOnChangePassword}
-            type="password"
-            placeholder="Password"
           />
 
           <Button
