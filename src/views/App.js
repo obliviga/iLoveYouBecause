@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import SignUp from './SignUp';
 import LogIn from './LogIn';
@@ -14,7 +15,8 @@ import withAuthentication from '../utils/withAuthentication';
 
 const App = () => (
   <Router>
-    <div>
+    <React.Fragment>
+      <CssBaseline />
       <Navigation />
       <Route
         exact
@@ -51,7 +53,7 @@ const App = () => (
         path={routes.ARCHIVEDREASONS}
         component={(location) => <ArchivedReasons location={location} />}
       />
-    </div>
+    </React.Fragment>
   </Router>
 );
 
