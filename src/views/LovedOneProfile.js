@@ -150,7 +150,6 @@ class LovedOneProfile extends Component {
     const { location } = this.props;
 
     let reasonsList;
-    let archivedReasonsList;
     let inputValid;
     let reasonBlurb;
     let editLovedOneButton;
