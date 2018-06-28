@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import MaterialButton from '@material-ui/core/Button';
 
 const Button = ({ text, onClick, type, disabled }) => (
-  <button type={type} onClick={onClick} disabled={disabled}>
+  <MaterialButton
+    variant="contained"
+    color="primary"
+    type={type}
+    onClick={onClick}
+    disabled={disabled}
+  >
     {text}
-  </button>
+  </MaterialButton>
 );
 
 Button.propTypes = {
