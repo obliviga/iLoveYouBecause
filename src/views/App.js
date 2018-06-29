@@ -4,7 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import SignUp from './SignUp';
 import LogIn from './LogIn';
-import PasswordForget from './PasswordForget';
+import ForgetPassword from './ForgetPassword';
 import Dashboard from './Dashboard';
 import Account from './Account';
 import Navigation from './Navigation';
@@ -31,7 +31,7 @@ const App = () => (
       <Route
         exact
         path={routes.PASSWORD_FORGET}
-        component={() => <PasswordForget />}
+        component={() => <ForgetPassword />}
       />
       <Route
         exact

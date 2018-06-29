@@ -1,60 +1,42 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { EmoticonSad } from 'mdi-material-ui';
+import { EmoticonSad, ArrowLeft } from 'mdi-material-ui';
 
-import byPropKey from '../utils/byPropKey';
 import { auth } from '../firebase';
-import * as routes from '../constants/routes';
+import byPropKey from '../utils/byPropKey';
 import Input from '../components/Input/Input';
-import PasswordInput from '../components/Input/PasswordInput';
 import Button from '../components/Button/Button';
-import ForgetPassword from './ForgetPassword';
+import LogIn from './LogIn';
+import './ForgetPassword.css';
 
-import './LogIn.css';
+const INITIAL_STATE = {
+  email: '',
+  error: null,
+  open: false,
+  forgetPassword: true,
+};
 
-class LogIn extends Component {
+class ForgetPassword extends Component {
   constructor(props) {
     super(props);
 
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
-    this.handleOnChangePassword = this.handleOnChangePassword.bind(this);
-    this.handleOnClickForgetPassword =
-      this.handleOnClickForgetPassword.bind(this);
+    this.handleOnClickBack = this.handleOnClickBack.bind(this);
 
-    this.state = {
-      email: '',
-      password: '',
-      error: null,
-      open: false,
-      forgetPassword: false,
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   handleOnSubmit(event) {
-    const {
-      email,
-      password,
-    } = this.state;
+    const { email } = this.state;
 
-    const {
-      history,
-    } = this.props;
-
-    auth.doSignInWithEmailAndPassword(email, password)
+    auth.doPasswordReset(email)
       .then(() => {
-        this.setState(() => ({
-          email: '',
-          password: '',
-          error: null,
-        }));
-        history.push(routes.DASHBOARD);
+        this.setState(() => ({ ...INITIAL_STATE }));
       })
       .catch(error => {
         this.setState({
@@ -70,10 +52,6 @@ class LogIn extends Component {
     this.setState(byPropKey('email', event.target.value));
   }
 
-  handleOnChangePassword(event) {
-    this.setState(byPropKey('password', event.target.value));
-  }
-
   handleClick = () => {
     this.setState({ open: true });
   };
@@ -86,29 +64,35 @@ class LogIn extends Component {
     this.setState({ open: false });
   };
 
-  handleOnClickForgetPassword() {
-    this.setState({ forgetPassword: !this.state.forgetPassword });
+  handleOnClickBack() {
+    this.setState({ forgetPassword: false });
   }
 
   render() {
     const {
       email,
-      password,
       error,
+      forgetPassword,
     } = this.state;
 
-    const isInvalid = password === '' || email === '';
+    const isInvalid = email === '';
 
-    if (this.state.forgetPassword) {
+    if (forgetPassword === false) {
       return (
-        <ForgetPassword />
+        <LogIn />
       );
     }
 
     return (
       <div className="container">
-        <h1>iLoveYouBecause</h1>
+        <h1>Password Forget</h1>
         <Paper className="paper">
+          <IconButton
+            aria-label="Go Back"
+            onClick={this.handleOnClickBack}
+          >
+            <ArrowLeft />
+          </IconButton>
           <form onSubmit={this.handleOnSubmit}>
             <Input
               value={email}
@@ -117,35 +101,16 @@ class LogIn extends Component {
               placeholder="Jyn.Erso@rogue1.com"
               label="Email Address"
             />
-
-            <div className="passwordInput">
-              <PasswordInput
-                value={password}
-                onChange={this.handleOnChangePassword}
-              />
-            </div>
             <div className="buttonContainer">
               <Button
                 type="submit"
                 disabled={isInvalid}
-                text="Log In"
+                text="Reset Password"
                 size="large"
                 fullWidth
               />
             </div>
           </form>
-          <div className="formText">
-            <a
-              href="#forgetPassword"
-              onClick={this.handleOnClickForgetPassword}
-            >
-              Forget Password?
-            </a>
-            <div className="signUpContainer">
-              <p className="noAccount">Don&apos;t have an account?</p>
-              <Link to={routes.SIGN_UP}> Sign Up!</Link>
-            </div>
-          </div>
         </Paper>
         <Snackbar
           className="snackbar"
@@ -179,12 +144,4 @@ class LogIn extends Component {
   }
 }
 
-export default withRouter(LogIn);
-
-LogIn.propTypes = {
-  history: PropTypes.shape({}),
-};
-
-LogIn.defaultProps = {
-  history: {},
-};
+export default ForgetPassword;

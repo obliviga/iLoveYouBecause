@@ -1,7 +1,7 @@
 import React from 'react';
 
 import AuthUserContext from '../components/AuthUserContext';
-import PasswordForget from './PasswordForget';
+import ForgetPassword from './ForgetPassword';
 import PasswordChange from './PasswordChange';
 import withAuthorization from '../utils/withAuthorization';
 
@@ -10,7 +10,7 @@ const AccountPage = () => (
     {authUser => (
       <div>
         <h1>Account: {authUser.email}</h1>
-        <PasswordForget />
+        <ForgetPassword />
         <PasswordChange />
       </div>
     )}
