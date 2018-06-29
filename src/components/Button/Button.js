@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MaterialButton from '@material-ui/core/Button';
 
-const Button = ({ text, onClick, type, disabled, size }) => (
+import './Button.css';
+
+const Button = ({ text, onClick, type, disabled, size, fullWidth }) => (
   <MaterialButton
     variant="contained"
     color="primary"
@@ -10,6 +12,7 @@ const Button = ({ text, onClick, type, disabled, size }) => (
     onClick={onClick}
     disabled={disabled}
     size={size}
+    fullWidth={fullWidth}
   >
     {text}
   </MaterialButton>
@@ -21,6 +24,7 @@ Button.propTypes = {
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
   size: PropTypes.string,
+  fullWidth: PropTypes.bool,
 };
 
 Button.defaultProps = {
@@ -28,6 +32,7 @@ Button.defaultProps = {
   disabled: false,
   onClick: () => {},
   size: 'normal',
+  fullWidth: false,
 };
 
 export default Button;
