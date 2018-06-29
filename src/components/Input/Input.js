@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 
 import newId from '../../utils/newId';
+import './Input.css';
 
 class Input extends Component {
   constructor(props) {
@@ -19,20 +20,21 @@ class Input extends Component {
       onChange,
       onKeyPress,
       label,
-      margin,
     } = this.props;
 
     return (
-      <TextField
-        type={type}
-        id={this.id}
-        label={label}
-        placeholder={placeholder}
-        margin={margin}
-        onChange={onChange}
-        onKeyPress={onKeyPress}
-        value={value}
-      />
+      <div className="inputContainer">
+        <TextField
+          type={type}
+          id={this.id}
+          label={label}
+          placeholder={placeholder}
+          onChange={onChange}
+          onKeyPress={onKeyPress}
+          value={value}
+          className="input"
+        />
+      </div>
     );
   }
 }
@@ -42,7 +44,6 @@ Input.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   placeholder: PropTypes.string,
-  margin: PropTypes.string,
   onChange: PropTypes.func,
   onKeyPress: PropTypes.func,
 };
@@ -54,7 +55,6 @@ Input.defaultProps = {
   onChange: () => {},
   onKeyPress: () => {},
   label: null,
-  margin: 'normal',
 };
 
 export default Input;

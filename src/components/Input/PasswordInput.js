@@ -10,6 +10,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import newId from '../../utils/newId';
+import './Input.css';
 
 class PasswordInput extends Component {
   constructor(props) {
@@ -36,26 +37,28 @@ class PasswordInput extends Component {
     const { showPassword } = this.state;
 
     return (
-      <FormControl>
-        <InputLabel htmlFor={this.id}>Password</InputLabel>
-        <Input
-          id={this.id}
-          type={showPassword ? 'text' : 'password'}
-          value={value}
-          onChange={onChange}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="Toggle password visibility"
-                onClick={this.handleClickShowPassword}
-                onMouseDown={this.handleMouseDownPassword}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
+      <div className="inputContainer password">
+        <FormControl>
+          <InputLabel htmlFor={this.id}>Password</InputLabel>
+          <Input
+            id={this.id}
+            type={showPassword ? 'text' : 'password'}
+            value={value}
+            onChange={onChange}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="Toggle password visibility"
+                  onClick={this.handleClickShowPassword}
+                  onMouseDown={this.handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+      </div>
     );
   }
 }
