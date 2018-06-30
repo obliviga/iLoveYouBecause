@@ -1,25 +1,16 @@
 import React, { Component } from 'react';
 
 import Paper from '@material-ui/core/Paper';
-import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { EmoticonSad, ArrowLeft, EmoticonHappy } from 'mdi-material-ui';
+import { ArrowLeft } from 'mdi-material-ui';
 
 import { auth } from '../firebase';
 import byPropKey from '../utils/byPropKey';
 import Input from '../components/Input/Input';
 import Button from '../components/Button/Button';
+import SnackBar from '../components/SnackBar/SnackBar';
 import LogIn from './LogIn';
 import './ForgetPassword.css';
-
-const INITIAL_STATE = {
-  email: '',
-  error: null,
-  open: false,
-  forgetPassword: true,
-  success: false,
-};
 
 class ForgetPassword extends Component {
   constructor(props) {
@@ -29,7 +20,13 @@ class ForgetPassword extends Component {
     this.handleOnChangeEmail = this.handleOnChangeEmail.bind(this);
     this.handleOnClickBack = this.handleOnClickBack.bind(this);
 
-    this.state = { ...INITIAL_STATE };
+    this.state = {
+      email: '',
+      error: '',
+      open: false,
+      forgetPassword: true,
+      success: false,
+    };
   }
 
   handleOnSubmit(event) {
@@ -39,7 +36,6 @@ class ForgetPassword extends Component {
       .then(() => {
         this.setState(() => ({
           email: '',
-          forgetPassword: false,
           success: true,
         }));
       })
@@ -57,16 +53,15 @@ class ForgetPassword extends Component {
     this.setState(byPropKey('email', event.target.value));
   }
 
-  handleClick = () => {
-    this.setState({ open: true });
-  };
-
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    this.setState({ open: false });
+    this.setState({
+      open: false,
+      success: false,
+    });
   };
 
   handleOnClickBack() {
@@ -80,6 +75,8 @@ class ForgetPassword extends Component {
       email,
       error,
       forgetPassword,
+      success,
+      open,
     } = this.state;
 
     const isInvalid = email === '';
@@ -120,55 +117,17 @@ class ForgetPassword extends Component {
             </div>
           </form>
         </Paper>
-        <Snackbar
-          className="snackBar success"
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          open={this.state.success}
-          autoHideDuration={6000}
+        <SnackBar
+          open={success}
           onClose={this.handleClose}
-          message={
-            <span className="messageContainer">
-              <EmoticonHappy />
-              <p className="message">
-                Please check your email for the password reset link.
-              </p>
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            </span>
-          }
+          variant="success"
+          messageText="Please check your email for the password reset link."
         />
-        <Snackbar
-          className="snackbar error"
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          open={this.state.open}
-          autoHideDuration={6000}
+        <SnackBar
+          open={open}
           onClose={this.handleClose}
-          message={
-            <span className="messageContainer">
-              <EmoticonSad />
-              <p className="message">{error && error.message}</p>
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            </span>
-          }
+          variant="error"
+          messageText={error && error.message}
         />
       </div>
     );

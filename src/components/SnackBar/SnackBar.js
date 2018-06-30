@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { EmoticonSad } from 'mdi-material-ui';
+import { EmoticonSad, EmoticonHappy } from 'mdi-material-ui';
 import MaterialSnackbar from '@material-ui/core/Snackbar';
 
 import './SnackBar.css';
@@ -26,6 +26,21 @@ class SnackBar extends PureComponent {
       messageContent = (
         <div className="messageContainer">
           <EmoticonSad />
+          <p className="message">{messageText}</p>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={onClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      );
+    } else {
+      messageContent = (
+        <div className="messageContainer">
+          <EmoticonHappy />
           <p className="message">{messageText}</p>
           <IconButton
             key="close"
@@ -66,7 +81,7 @@ SnackBar.propTypes = {
   verticleposition: PropTypes.string,
   horizontalposition: PropTypes.string,
   variant: PropTypes.oneOf(['normal', 'success', 'error']),
-  messageText: PropTypes.string.isRequired,
+  messageText: PropTypes.string,
 };
 
 SnackBar.defaultProps = {
@@ -76,4 +91,5 @@ SnackBar.defaultProps = {
   verticleposition: 'top',
   horizontalposition: 'left',
   onClose: () => {},
+  messageText: 'Something went wrong.',
 };
