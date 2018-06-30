@@ -31,7 +31,6 @@ class LogIn extends Component {
       error: '',
       open: false,
       forgetPassword: false,
-      checked: false,
     };
   }
 
@@ -72,10 +71,6 @@ class LogIn extends Component {
     this.setState(byPropKey('password', event.target.value));
   }
 
-  handleClick = () => {
-    this.setState({ open: true });
-  };
-
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -87,7 +82,6 @@ class LogIn extends Component {
   handleOnClickForgetPassword() {
     this.setState({
       forgetPassword: !this.state.forgetPassword,
-      checked: !this.state.checked,
     });
   }
 
@@ -96,6 +90,7 @@ class LogIn extends Component {
       email,
       password,
       error,
+      open,
     } = this.state;
 
     const isInvalid = password === '' || email === '';
@@ -150,7 +145,7 @@ class LogIn extends Component {
           </div>
         </Paper>
         <SnackBar
-          open={this.state.open}
+          open={open}
           onClose={this.handleClose}
           variant="error"
           messageText={error && error.message}
@@ -166,6 +161,6 @@ LogIn.propTypes = {
   history: PropTypes.shape({}),
 };
 
-LogIn.defaultProps = {
-  history: {},
-};
+// LogIn.defaultProps = {
+//   showSuccess: false,
+// };
