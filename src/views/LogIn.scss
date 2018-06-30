@@ -1,4 +1,4 @@
-.container {
+.logInContainer {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -12,6 +12,10 @@
   .paper {
     padding: 24px;
     width: 360px;
+
+    .forgetPasswordText {
+      width: fit-content;
+    }
   }
 
   form {

@@ -34,6 +34,7 @@ class LogIn extends Component {
       error: null,
       open: false,
       forgetPassword: false,
+      checked: false,
     };
   }
 
@@ -87,7 +88,10 @@ class LogIn extends Component {
   };
 
   handleOnClickForgetPassword() {
-    this.setState({ forgetPassword: !this.state.forgetPassword });
+    this.setState({
+      forgetPassword: !this.state.forgetPassword,
+      checked: !this.state.checked,
+    });
   }
 
   render() {
@@ -95,6 +99,7 @@ class LogIn extends Component {
       email,
       password,
       error,
+      checked,
     } = this.state;
 
     const isInvalid = password === '' || email === '';
@@ -106,7 +111,7 @@ class LogIn extends Component {
     }
 
     return (
-      <div className="container">
+      <div className="logInContainer">
         <h1>iLoveYouBecause</h1>
         <Paper className="paper">
           <form onSubmit={this.handleOnSubmit}>
@@ -114,7 +119,7 @@ class LogIn extends Component {
               value={email}
               onChange={this.handleOnChangeEmail}
               type="email"
-              placeholder="Jyn.Erso@rogue1.com"
+              placeholder="darth.vader@sith.com"
               label="Email Address"
             />
 
@@ -138,6 +143,7 @@ class LogIn extends Component {
             <a
               href="#forgetPassword"
               onClick={this.handleOnClickForgetPassword}
+              className="forgetPasswordText"
             >
               Forget Password?
             </a>

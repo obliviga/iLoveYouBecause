@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { EmoticonSad, ArrowLeft } from 'mdi-material-ui';
+import { EmoticonSad, ArrowLeft, EmoticonHappy } from 'mdi-material-ui';
 
 import { auth } from '../firebase';
 import byPropKey from '../utils/byPropKey';
@@ -18,6 +18,7 @@ const INITIAL_STATE = {
   error: null,
   open: false,
   forgetPassword: true,
+  success: false,
 };
 
 class ForgetPassword extends Component {
@@ -36,7 +37,11 @@ class ForgetPassword extends Component {
 
     auth.doPasswordReset(email)
       .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
+        this.setState(() => ({
+          email: '',
+          forgetPassword: false,
+          success: true,
+        }));
       })
       .catch(error => {
         this.setState({
@@ -65,7 +70,9 @@ class ForgetPassword extends Component {
   };
 
   handleOnClickBack() {
-    this.setState({ forgetPassword: false });
+    this.setState({
+      forgetPassword: false,
+    });
   }
 
   render() {
@@ -84,12 +91,13 @@ class ForgetPassword extends Component {
     }
 
     return (
-      <div className="container">
-        <h1>Password Forget</h1>
+      <div className="forgetPasswordContainer">
+        <h1>Reset Your Password:</h1>
         <Paper className="paper">
           <IconButton
             aria-label="Go Back"
             onClick={this.handleOnClickBack}
+            className="backButton"
           >
             <ArrowLeft />
           </IconButton>
@@ -98,14 +106,14 @@ class ForgetPassword extends Component {
               value={email}
               onChange={this.handleOnChangeEmail}
               type="email"
-              placeholder="Jyn.Erso@rogue1.com"
+              placeholder="hermit.yoda@dagobah.com"
               label="Email Address"
             />
             <div className="buttonContainer">
               <Button
                 type="submit"
                 disabled={isInvalid}
-                text="Reset Password"
+                text="Do it."
                 size="large"
                 fullWidth
               />
@@ -113,7 +121,33 @@ class ForgetPassword extends Component {
           </form>
         </Paper>
         <Snackbar
-          className="snackbar"
+          className="snackBar success"
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          open={this.state.success}
+          autoHideDuration={6000}
+          onClose={this.handleClose}
+          message={
+            <span className="messageContainer">
+              <EmoticonHappy />
+              <p className="message">
+                Please check your email for the password reset link.
+              </p>
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                onClick={this.handleClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            </span>
+          }
+        />
+        <Snackbar
+          className="snackbar error"
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'left',
@@ -121,11 +155,8 @@ class ForgetPassword extends Component {
           open={this.state.open}
           autoHideDuration={6000}
           onClose={this.handleClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
           message={
-            <span id="message-id" className="messageContainer">
+            <span className="messageContainer">
               <EmoticonSad />
               <p className="message">{error && error.message}</p>
               <IconButton
