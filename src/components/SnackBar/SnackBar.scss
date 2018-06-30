@@ -1,0 +1,22 @@
+.snackbarContainer {
+  .messageContainer {
+    display: flex;
+    align-items: center;
+
+    .message {
+      padding-left: 24px;
+    }
+  }
+
+  &.error {
+    div:first-child {
+      background-color: #CF333A;
+    }
+  }
+
+  &.success {
+    div:first-child {
+      background-color: #4A9E4F;
+    }
+  }
+}

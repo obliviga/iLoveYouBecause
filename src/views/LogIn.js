@@ -3,10 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import Paper from '@material-ui/core/Paper';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { EmoticonSad } from 'mdi-material-ui';
 
 import byPropKey from '../utils/byPropKey';
 import { auth } from '../firebase';
@@ -14,6 +10,7 @@ import * as routes from '../constants/routes';
 import Input from '../components/Input/Input';
 import PasswordInput from '../components/Input/PasswordInput';
 import Button from '../components/Button/Button';
+import SnackBar from '../components/SnackBar/SnackBar';
 import ForgetPassword from './ForgetPassword';
 
 import './LogIn.css';
@@ -31,7 +28,7 @@ class LogIn extends Component {
     this.state = {
       email: '',
       password: '',
-      error: null,
+      error: '',
       open: false,
       forgetPassword: false,
       checked: false,
@@ -53,7 +50,7 @@ class LogIn extends Component {
         this.setState(() => ({
           email: '',
           password: '',
-          error: null,
+          error: '',
         }));
         history.push(routes.DASHBOARD);
       })
@@ -99,7 +96,6 @@ class LogIn extends Component {
       email,
       password,
       error,
-      checked,
     } = this.state;
 
     const isInvalid = password === '' || email === '';
@@ -153,32 +149,11 @@ class LogIn extends Component {
             </div>
           </div>
         </Paper>
-        <Snackbar
-          className="snackbar"
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
+        <SnackBar
           open={this.state.open}
-          autoHideDuration={6000}
           onClose={this.handleClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={
-            <span id="message-id" className="messageContainer">
-              <EmoticonSad />
-              <p className="message">{error && error.message}</p>
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            </span>
-          }
+          variant="error"
+          messageText={error && error.message}
         />
       </div>
     );

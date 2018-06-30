@@ -48,19 +48,4 @@
       margin-top: 0;
     }
   }
-
-  .snackbar {
-    div:first-child {
-      background-color: #CF333A;
-    }
-
-    .messageContainer {
-      display: flex;
-      align-items: center;
-
-      .message {
-        padding-left: 24px;
-      }
-    }
-  }
 }
