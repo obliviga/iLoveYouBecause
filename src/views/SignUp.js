@@ -45,6 +45,12 @@ class SignUp extends Component {
       .then((user) => {
         this.setState(() => ({ ...INITIAL_STATE }));
 
+        auth.currentUser.sendEmailVerification()
+          .then(() => {
+
+          }).catch((error) => {
+
+          });
         // Redirect to dashboard
         history.push(routes.DASHBOARD);
 
