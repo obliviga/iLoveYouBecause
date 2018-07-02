@@ -138,7 +138,7 @@ class LogIn extends Component {
             >
               Forget Password?
             </a>
-            <div className="signUpContainer">
+            <div className="signUpText">
               <p className="noAccount">Don&apos;t have an account?</p>
               <Link to={routes.SIGN_UP}> Sign Up!</Link>
             </div>
