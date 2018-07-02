@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Timer from 'easytimer.js';
 
 import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
@@ -15,6 +16,8 @@ class Dashboard extends Component {
       nameInputValue: '',
       emailInputValue: '',
       firstName: '',
+      resendConfirmationDisabled: false,
+      timer: '',
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -22,6 +25,8 @@ class Dashboard extends Component {
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handleKeyPressEmail = this.handleKeyPressEmail.bind(this);
     this.addLovedOne = this.addLovedOne.bind(this);
+    this.resendConfirmation = this.resendConfirmation.bind(this);
+    this.enableResendConfirmation = this.enableResendConfirmation.bind(this);
 
     auth.onAuthStateChanged(user => {
       const userRef = db
@@ -113,6 +118,37 @@ class Dashboard extends Component {
     });
   }
 
+  resendConfirmation() {
+    auth.currentUser.sendEmailVerification()
+      .then(() => {
+        this.setState({ resendConfirmationDisabled: true });
+
+        const timer = new Timer();
+
+        timer.start({
+          countdown: true,
+          startValues: { seconds: 4 },
+        });
+
+        timer.addEventListener('secondsUpdated', () => {
+          console.log(timer.getTimeValues().seconds);
+          this.setState({ timer: timer.getTimeValues().seconds });
+        });
+
+        timer.addEventListener('targetAchieved', () => {
+          console.log('targetAchieved:', 'REENABLE BUTTON');
+          this.setState({ timer: '' });
+          this.enableResendConfirmation();
+        });
+      }).catch((error) => {
+        // An error happened.
+      });
+  }
+
+  enableResendConfirmation() {
+    this.setState({ resendConfirmationDisabled: false });
+  }
+
   render() {
     let lovedOnes;
     let inputsValid;
@@ -143,6 +179,26 @@ class Dashboard extends Component {
     // Prevent first name from appearing after other components have loaded
     if (!this.state.firstName) {
       return <div />;
+    }
+
+    // If the current user is not verified
+    if (auth.currentUser.emailVerified === false) {
+      // Enable the resend confirmation button in two seconds
+      // this.enableResendConfirmationInTwoSeconds();
+
+      return (
+        <div>
+          <p>
+            Please check your email and verify your account
+            in order to continue.
+          </p>
+          <Button
+            onClick={this.resendConfirmation}
+            text={`Resend Confirmation ${this.state.timer}`}
+            disabled={this.state.resendConfirmationDisabled}
+          />
+        </div>
+      );
     }
 
     return (
