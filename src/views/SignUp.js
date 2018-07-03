@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import Recaptcha from 'react-recaptcha';
 
 import Paper from '@material-ui/core/Paper';
@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   recaptchaVerified: false,
   recaptchaApiKey: `${process.env.REACT_APP_RECAPTCHA_API_KEY}`,
   open: false,
+  redirect: false,
 };
 
 class SignUp extends Component {
@@ -38,6 +39,7 @@ class SignUp extends Component {
     this.handleOnChangePasswordTwo = this.handleOnChangePasswordTwo.bind(this);
     this.handleOnVerifyRecaptcha = this.handleOnVerifyRecaptcha.bind(this);
     this.handleOnClickBack = this.handleOnClickBack.bind(this);
+    this.handleOnClose = this.handleOnClose.bind(this);
 
     this.state = { ...INITIAL_STATE };
   }
@@ -118,21 +120,23 @@ class SignUp extends Component {
     this.setState({ recaptchaVerified: true });
   }
 
-  handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
+  handleOnClose() {
     this.setState({
       open: false,
       success: false,
     });
-  };
+  }
 
   handleOnClickBack() {
-    this.setState({
-      forgetPassword: false,
-    });
+    this.setState({ redirect: true });
+  }
+
+  renderRedirect() {
+    if (this.state.redirect) {
+      return <Redirect to="/" />;
+    }
+
+    return false;
   }
 
   render() {
@@ -217,10 +221,11 @@ class SignUp extends Component {
         </Paper>
         <SnackBar
           open={open}
-          onClose={this.handleClose}
+          onClose={this.handleOnClose}
           variant="error"
           messageText={error && error.message}
         />
+        {this.renderRedirect()}
       </div>
     );
   }
