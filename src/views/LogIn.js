@@ -149,6 +149,7 @@ class LogIn extends Component {
           onClose={this.handleClose}
           variant="error"
           messageText={error && error.message}
+          autoHideDuration={30000}
         />
       </div>
     );
