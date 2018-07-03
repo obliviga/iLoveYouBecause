@@ -16,8 +16,9 @@ class Dashboard extends Component {
       nameInputValue: '',
       emailInputValue: '',
       firstName: '',
-      resendConfirmationDisabled: false,
+      resendConfirmationDisabled: true,
       timer: '',
+      emailVerified: auth.currentUser.emailVerified,
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -27,6 +28,7 @@ class Dashboard extends Component {
     this.addLovedOne = this.addLovedOne.bind(this);
     this.resendConfirmation = this.resendConfirmation.bind(this);
     this.enableResendConfirmation = this.enableResendConfirmation.bind(this);
+    this.startTimer = this.startTimer.bind(this);
 
     auth.onAuthStateChanged(user => {
       const userRef = db
@@ -64,6 +66,10 @@ class Dashboard extends Component {
 
       this.setState({ user });
     });
+
+    if (auth.currentUser.emailVerified === false) {
+      this.startTimer();
+    }
   }
 
   handleChangeName(event) {
@@ -118,31 +124,47 @@ class Dashboard extends Component {
     });
   }
 
+  startTimer() {
+    const timer = new Timer();
+
+    timer.start({
+      countdown: true,
+      startValues: { seconds: 30 },
+    });
+
+    timer.addEventListener('secondsUpdated', () => {
+      this.setState({ timer: timer.getTimeValues().seconds });
+
+      auth.currentUser.reload();
+
+      if (auth.currentUser.emailVerified === true) {
+        this.setState({
+          emailVerified: true,
+        });
+      }
+    });
+
+    timer.addEventListener('targetAchieved', () => {
+      this.setState({ timer: '' });
+      this.enableResendConfirmation();
+    });
+  }
+
   resendConfirmation() {
-    auth.currentUser.sendEmailVerification()
-      .then(() => {
-        this.setState({ resendConfirmationDisabled: true });
-
-        const timer = new Timer();
-
-        timer.start({
-          countdown: true,
-          startValues: { seconds: 4 },
-        });
-
-        timer.addEventListener('secondsUpdated', () => {
-          console.log(timer.getTimeValues().seconds);
-          this.setState({ timer: timer.getTimeValues().seconds });
-        });
-
-        timer.addEventListener('targetAchieved', () => {
-          console.log('targetAchieved:', 'REENABLE BUTTON');
-          this.setState({ timer: '' });
-          this.enableResendConfirmation();
-        });
-      }).catch((error) => {
-        // An error happened.
+    if (auth.currentUser.emailVerified === true) {
+      this.setState({
+        emailVerified: true,
       });
+    } else {
+      auth.currentUser.sendEmailVerification()
+        .then(() => {
+          this.setState({ resendConfirmationDisabled: true });
+
+          this.startTimer();
+        }).catch((error) => {
+          // TODO: Snackbar error
+        });
+    }
   }
 
   enableResendConfirmation() {
@@ -182,15 +204,12 @@ class Dashboard extends Component {
     }
 
     // If the current user is not verified
-    if (auth.currentUser.emailVerified === false) {
-      // Enable the resend confirmation button in two seconds
-      // this.enableResendConfirmationInTwoSeconds();
-
+    if (this.state.emailVerified === false) {
       return (
         <div>
           <p>
-            Please check your email and verify your account
-            in order to continue.
+            Please check your email ({auth.currentUser.email})
+            and click the link to verify your account in order to continue.
           </p>
           <Button
             onClick={this.resendConfirmation}
