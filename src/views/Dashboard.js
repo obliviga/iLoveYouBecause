@@ -16,7 +16,7 @@ class Dashboard extends Component {
       nameInputValue: '',
       emailInputValue: '',
       firstName: '',
-      resendConfirmationDisabled: true,
+      disableResendConfirmation: true,
       timer: '',
       emailVerified: auth.currentUser.emailVerified,
     };
@@ -29,6 +29,7 @@ class Dashboard extends Component {
     this.resendConfirmation = this.resendConfirmation.bind(this);
     this.enableResendConfirmation = this.enableResendConfirmation.bind(this);
     this.startTimer = this.startTimer.bind(this);
+    this.checkUserConfirmed = this.checkUserConfirmed.bind(this);
 
     auth.onAuthStateChanged(user => {
       const userRef = db
@@ -134,20 +135,20 @@ class Dashboard extends Component {
 
     timer.addEventListener('secondsUpdated', () => {
       this.setState({ timer: timer.getTimeValues().seconds });
-
-      auth.currentUser.reload();
-
-      if (auth.currentUser.emailVerified === true) {
-        this.setState({
-          emailVerified: true,
-        });
-      }
+      this.checkUserConfirmed();
     });
 
     timer.addEventListener('targetAchieved', () => {
       this.setState({ timer: '' });
+      this.checkUserConfirmed();
+
       this.enableResendConfirmation();
     });
+
+    if (this.state.emailVerified === true) {
+      timer.removeventListener('secondsUpdated', () => {});
+      timer.removeventListener('targetAchieved', () => {});
+    }
   }
 
   resendConfirmation() {
@@ -158,9 +159,11 @@ class Dashboard extends Component {
     } else {
       auth.currentUser.sendEmailVerification()
         .then(() => {
-          this.setState({ resendConfirmationDisabled: true });
+          this.setState({ disableResendConfirmation: true });
 
-          this.startTimer();
+          if (this.state.emailVerified === false) {
+            this.startTimer();
+          }
         }).catch((error) => {
           // TODO: Snackbar error
         });
@@ -168,7 +171,25 @@ class Dashboard extends Component {
   }
 
   enableResendConfirmation() {
-    this.setState({ resendConfirmationDisabled: false });
+    this.setState({ disableResendConfirmation: false });
+  }
+
+  checkUserConfirmed() {
+    if (auth.currentUser) {
+      switch (auth.currentUser.emailVerified) {
+        case true:
+          this.setState({
+            emailVerified: true,
+          });
+
+          break;
+        case false:
+          auth.currentUser.reload();
+
+          break;
+        default: break;
+      }
+    }
   }
 
   render() {
@@ -205,6 +226,17 @@ class Dashboard extends Component {
 
     // If the current user is not verified
     if (this.state.emailVerified === false) {
+      // If resend confirmation button is enabled
+      if (this.state.disableResendConfirmation === false) {
+        const timer = new Timer();
+
+        timer.start();
+
+        timer.addEventListener('secondsUpdated', () => {
+          this.checkUserConfirmed();
+        });
+      }
+
       return (
         <div>
           <p>
@@ -214,7 +246,7 @@ class Dashboard extends Component {
           <Button
             onClick={this.resendConfirmation}
             text={`Resend Confirmation ${this.state.timer}`}
-            disabled={this.state.resendConfirmationDisabled}
+            disabled={this.state.disableResendConfirmation}
           />
         </div>
       );
