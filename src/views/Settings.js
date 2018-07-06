@@ -5,7 +5,7 @@ import ForgetPassword from './ForgetPassword';
 import PasswordChange from './PasswordChange';
 import withAuthorization from '../utils/withAuthorization';
 
-const AccountPage = () => (
+const Settings = () => (
   <AuthUserContext.Consumer>
     {authUser => (
       <div>
@@ -19,4 +19,4 @@ const AccountPage = () => (
 
 const authCondition = (authUser) => !!authUser;
 
-export default withAuthorization(authCondition)(AccountPage);
+export default withAuthorization(authCondition)(Settings);

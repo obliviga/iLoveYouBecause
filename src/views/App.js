@@ -6,7 +6,7 @@ import SignUp from './SignUp';
 import LogIn from './LogIn';
 import ForgetPassword from './ForgetPassword';
 import Dashboard from './Dashboard';
-import Account from './Account';
+import Settings from './Settings';
 import Navigation from './Navigation';
 import LovedOneProfile from './LovedOneProfile';
 import ArchivedReasons from './ArchivedReasons';
@@ -40,8 +40,8 @@ const App = () => (
       />
       <Route
         exact
-        path={routes.ACCOUNT}
-        component={() => <Account />}
+        path={routes.SETTINGS}
+        component={() => <Settings />}
       />
       <Route
         exact
