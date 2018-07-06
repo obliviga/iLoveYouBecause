@@ -5,6 +5,7 @@ import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
+import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator';
 import LovedOne from './LovedOne';
 
 class Dashboard extends Component {
@@ -221,7 +222,7 @@ class Dashboard extends Component {
 
     // Prevent first name from appearing after other components have loaded
     if (!this.state.firstName) {
-      return <div />;
+      return <LoadingIndicator />;
     }
 
     // If the current user is not verified
