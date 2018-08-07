@@ -1,12 +1,26 @@
 import React, { Component } from 'react';
 import Timer from 'easytimer.js';
 
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import AddIcon from '@material-ui/icons/Add';
+import MaterialButton from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+
 import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
 import Button from '../components/Button/Button';
 import Input from '../components/Input/Input';
 import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator';
 import LovedOne from './LovedOne';
+
+import './Dashboard.css';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -20,6 +34,8 @@ class Dashboard extends Component {
       disableResendConfirmation: true,
       timer: '',
       emailVerified: auth.currentUser.emailVerified,
+      dense: false,
+      open: false,
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -31,6 +47,7 @@ class Dashboard extends Component {
     this.enableResendConfirmation = this.enableResendConfirmation.bind(this);
     this.startTimer = this.startTimer.bind(this);
     this.checkUserConfirmed = this.checkUserConfirmed.bind(this);
+    this.showAddLovedOneModal = this.showAddLovedOneModal.bind(this);
 
     auth.onAuthStateChanged(user => {
       const userRef = db
@@ -123,6 +140,8 @@ class Dashboard extends Component {
         nameInputValue: '',
         emailInputValue: '',
       });
+
+      this.handleClose();
     });
   }
 
@@ -193,7 +212,20 @@ class Dashboard extends Component {
     }
   }
 
+  showAddLovedOneModal() {
+    this.setState({
+      open: true,
+    });
+  }
+
+  handleClose = value => {
+    this.setState({ selectedValue: value, open: false });
+  };
+
   render() {
+    const { dense } = this.state;
+    const { onClose, selectedValue, ...other } = this.props;
+
     let lovedOnes;
     let inputsValid;
     let welcomeBlurb;
@@ -211,7 +243,7 @@ class Dashboard extends Component {
 
       welcomeBlurb = 'Here are your loved ones:';
     } else {
-      welcomeBlurb = 'Feel free to add some loved ones.';
+      welcomeBlurb = 'Feel free to add some loved ones below.';
     }
 
     if (this.state.nameInputValue === '' || this.state.emailInputValue === '') {
@@ -254,28 +286,74 @@ class Dashboard extends Component {
     }
 
     return (
-      <div>
-        <Input
-          value={this.state.nameInputValue}
-          placeholder="Jyn Erso"
-          onChange={this.handleChangeName}
-          onKeyPress={this.handleKeyPressName}
-        />
-        <Input
-          type="email"
-          value={this.state.emailInputValue}
-          placeholder="jyn.erso@rogueone.com"
-          onChange={this.handleChangeEmail}
-          onKeyPress={this.handleKeyPressEmail}
-        />
-        <Button
-          onClick={this.addLovedOne}
-          text="Add"
-          disabled={!inputsValid}
-        />
+      <div className="dashboardContainer">
         <h1>Hey {this.state.firstName}!</h1>
         <h2>{welcomeBlurb}</h2>
-        <ul>{lovedOnes}</ul>
+        <Grid item xs={12} md={6}>
+          <Typography variant="title">
+            Add em&#39;
+          </Typography>
+          <div>
+            <List dense={dense}>
+              {lovedOnes}
+            </List>
+          </div>
+        </Grid>
+        <MaterialButton
+          variant="fab"
+          color="primary"
+          aria-label="Add"
+          onClick={this.showAddLovedOneModal}
+          className="addLovedOne"
+        >
+          <AddIcon />
+        </MaterialButton>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+          className="dashboardDialog"
+          fullWidth
+        >
+          <DialogTitle id="form-dialog-title">Add a loved one:</DialogTitle>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={this.handleClose}
+            className="closeIcon"
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent>
+            <div className="formGroup">
+              <Input
+                value={this.state.nameInputValue}
+                placeholder="Jyn Erso"
+                onChange={this.handleChangeName}
+                onKeyPress={this.handleKeyPressName}
+                label="Name"
+              />
+              <Input
+                type="email"
+                value={this.state.emailInputValue}
+                placeholder="jyn.erso@rogueone.com"
+                onChange={this.handleChangeEmail}
+                onKeyPress={this.handleKeyPressEmail}
+                label="Email"
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <div className="dashboardDialogActions">
+              <Button
+                text="Add"
+                onClick={this.addLovedOne}
+                disabled={!inputsValid}
+              />
+            </div>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
