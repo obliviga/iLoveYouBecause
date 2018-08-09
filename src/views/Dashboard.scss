@@ -31,10 +31,21 @@
       }
     }
   }
+
+  .paperContainer {
+    margin: 0 auto;
+
+    @include desktop {
+      max-width: 50%;
+    }
+  }
 }
 
 .dashboardDialog {
-  display: none;
+  // Paper component that is the actual dialog
+  > div:last-child {
+    margin: 24px;
+  }
 
   .closeIcon {
     position: absolute;

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Timer from 'easytimer.js';
 
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import AddIcon from '@material-ui/icons/Add';
 import MaterialButton from '@material-ui/core/Button';
@@ -12,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Paper from '@material-ui/core/Paper';
 
 import { db, auth } from '../firebase/firebase';
 import withAuthorization from '../utils/withAuthorization';
@@ -289,16 +288,16 @@ class Dashboard extends Component {
       <div className="dashboardContainer">
         <h1>Hey {this.state.firstName}!</h1>
         <h2>{welcomeBlurb}</h2>
-        <Grid item xs={12} md={6}>
-          <Typography variant="title">
-            Add em&#39;
-          </Typography>
-          <div>
+        {/* <Typography variant="title">
+          Add em&#39;
+        </Typography> */}
+        <div className="paperContainer">
+          <Paper>
             <List dense={dense}>
               {lovedOnes}
             </List>
-          </div>
-        </Grid>
+          </Paper>
+        </div>
         <MaterialButton
           variant="fab"
           color="primary"
