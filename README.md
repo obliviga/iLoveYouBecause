@@ -5,7 +5,7 @@ iLoveYouBecause is a web app that allows users to periodically send their loved 
 
 ### Technical Requirements
 #### Hosting
-Netlify will be used to host the app.
+Heroku will be used to host the app.
 
 #### User Authentication
 Users are authenticated via email. However, 2FA via SMS is required to prevent excess unauthorized logins. The user must go through 2FA each time they want to log in.
